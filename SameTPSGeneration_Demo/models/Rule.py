@@ -7,7 +7,7 @@ from models import TypeChecker as Tper
 '''
 提取的规则
 '''
-@Tper.AddTypeCheckerDecorator(_context=str,_original=str,_to=str,_location=str)
+@Tper.AddTypeCheckerDecorator(_context=tuple,_original=str,_to=str,_location=str)
 class Rule(object):
 
     def __init__(self,context=None,original=None,to=None,location=None):

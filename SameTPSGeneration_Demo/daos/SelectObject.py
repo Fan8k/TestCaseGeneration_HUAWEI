@@ -34,12 +34,11 @@ class SelectObject(object):
 
 
 def main():
-    location = input()
-    filetype = input()
+    location = "1"
+    filetype = "001_normalTest"
     itemlist = SelectObject()
     item = itemlist.selected_object(location, filetype)
-    print(item[0])
-    print(item[1])
+    print(item)
 
 
 if __name__=='__main__':
