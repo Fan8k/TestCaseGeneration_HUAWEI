@@ -37,7 +37,7 @@ class Insert:
         #effectRow = cur.rowcount
         #print(effectRow)
         '''
-        loca=str(5)#第一个文件夹数据
+        loca=str(1)#第一个文件夹数据
         for i in range(0, lenth):
                 xmlpath =rootdir + '/' + filetypelist[i] + '/' + 'uut-com.xml'
                 print(filetypelist[i])
@@ -52,8 +52,25 @@ class Insert:
                 #cmdtent = []
                 count = 0
                 for item in root.findall('item'):
-                    count += 2
-                    response_text = item.find('response').text
+                    responsestr = responsestr + str(count)
+                    response_text = item.findall('response')
+                    for tmp in response_text:
+                        # print(tmp.text)
+
+                        if tmp.text != None:
+                            if tmp.text.find('\n') != -1 or tmp.text.find('..') != -1:
+                                response_content = tmp.text.replace('\n', '\\n').replace('..', '')
+                                responsestr = responsestr + response_content + '||'
+                                #value.append(response_content)
+                                #value.append("==")
+                            else:
+                                responsestr = responsestr + response_content + '||'
+                                #value.append(response_content)
+                                #value.append("==")
+                        else:
+                            responsestr = responsestr + 'none' + '||'
+                            #value.append(tmp.text)
+                            #value.append("==")
                     cmd_text = item.find('cmd').text
                     if cmd_text is not None:
                         if cmd_text.find('\n') != -1:
@@ -69,25 +86,15 @@ class Insert:
                         cmdstr = cmdstr + 'none' + '||'
                         #cmdtent.append(cmd_text)
                         #cmdtent.append("==")
-                    if response_text is not None:
-                        if response_text.find('\n') != -1 or response_text.find('..') !=-1:
-                            response_text = response_text.replace('\n', '\\n').replace('..', '')
-                            responsestr = responsestr + response_text + '||'
-                            #respontent.append(response_text)
-                            #respontent.append("==")
-                        else:
-                            responsestr = responsestr + response_text + '||'
-                            #respontent.append(response_text)
-                            #respontent.append("==")
-                    else:
-                        responsestr = responsestr + 'none' + '||'
-                        #respontent.append(response_text)
-                        #respontent.append("==")
 
-
+                    count += 1
+                responsestr = responsestr + str(count)
+                cmdstr = cmdstr + str(count)
                 value = (loca,filetypelist[i],cmdstr,responsestr)
                 print(cmdstr)
-                cur.execute('insert into tsp_info values(null,%s,%s,%s,%s,0)', value)
+                print("response内容：")
+                print(responsestr)
+                #cur.execute('insert into tsp_info values(null,%s,%s,%s,%s,0)', value)
 
                 conn.commit()
 
