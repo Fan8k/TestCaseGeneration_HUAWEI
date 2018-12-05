@@ -22,7 +22,7 @@ class ExtractRules:
     cs = ContextSolver()
     rs = RulesSolver()
 
-    def get_items(self,location,type):
+    def _get_items(self,location,type):
         '''
         :param location: 测试数据中的编码
         :param type: 模型组和原型组数据所在文件夹的名字
@@ -31,8 +31,7 @@ class ExtractRules:
         self.location = location
         return ExtractRules.st.selected_object(location,type)
 
-
-    def get_rules(self,proto_items,model_items):
+    def _get_rules(self,proto_items,model_items):
         rules = []
         '''
         原型组和模型组提取的item正常情况下等大小，而且是一对一的关系
@@ -43,20 +42,19 @@ class ExtractRules:
         #获取修改过的item对象
         for index in range(len(proto_items)):
             pri_item = proto_items[index]
-            model_item = proto_items[index]
+            model_item = model_items[index]
             for response_index in range(len(pri_item.responses)):
                 #对应的item对象的response字符串
                 pri_response_str = ExtractRules.md5.encode(pri_item.responses[response_index])
                 model_response_str = ExtractRules.md5.encode(model_item.responses[response_index])
                 if pri_response_str != model_response_str:
                      #找出修改点及其在原来字符串中的位置信息
-                     results = self.find_change_points(pri_response_str,model_response_str)
+                     results = self._find_change_points(pri_response_str,model_response_str)
                      results[0] = ExtractRules.cs.between_changes_context(results[0],len(results[1]))
                      rules.extend(ExtractRules.rs.pack_rules(results[0],results[1],self.location))
-
         return rules
 
-    def find_change_points(self,pri_response_str,model_response_str):
+    def _find_change_points(self,pri_response_str,model_response_str):
         '''
         根据两个item的reponse 字符串找出所有的更改点
         :param pri_response_str:  原字符串 update service loopmode 1\\r||update pass ratio 2
@@ -127,11 +125,34 @@ class ExtractRules:
 
         return (change_contexts,changes_origin_to)
 
+    def get_File_rules(self,location,pri_type,model_type):
+        '''
+        输入TPS下的某一个编码的原型组和某一个模型组提取规则(这仅仅是两个文件中提取的规则)
+        :param location: 某一个编码的标识符（文件名字）
+        :param pri_type: 原型组的标识符（文件名字）
+        :param model_type:模型组的标识符（文件名字）
+        :return:两个文件差异规则
+        '''
+        proto_items = self._get_items(location,pri_type)
+        model_items = self._get_items(location,model_type)
+        return self._get_rules(proto_items,model_items)
 
-
+    def get_encode_rules(self,location,pri_type,model_types):
+        rules = []
+        '''
+        输入TPS下的某一个编码的原型组和某一个模型组提取规则(这仅仅是两个文件中提取的规则)
+        :param location: 某一个编码的标识符（文件名字）
+        :param pri_type: 原型组的标识符（文件名字）默认一个编码下就一个原型组文件
+        :param model_types:模型组的标识符（文件名字）的集合 ['002_check', '006_check']
+        :return:整个编码下所有的规则
+        '''
+        for model_type in model_types:
+            rules.extend(self.get_File_rules(location,pri_type,model_type))
+        return rules
 
 if __name__ =="__main__":
-    pass   #location _type = {}
-   # ex = ExtractRules()
-   # results=ex.find_change_points("update servicelaomme 3\\r||updte pass ratio 2","update servicelaomme 3\\r||updte fail ratio 2")
-   # print(results[0],results[1])
+    ex = ExtractRules()
+    results=ex._find_change_points(r"\r\nOK\r\r\n\r\r\n  \(1)\UUT_SWT(1)\Qbarcode(1).........................Pass [00:00:00.000]\r\r\n  qbarcode............................................Pass [barcode:023DUA0147258369]\r\r\n  \(1)\UUT_SWT(1)\Qbarcode(*).........................Pass [00:00:00.000]\r\r\n\UUT_SWT&gt; ",
+                                   r"\r\nOK\r\r\n\r\r\n  \(1)\UUT_SWT(1)\Qbarcode(1).........................Pass [00:00:00.000]\r\r\n  qbarcode............................................Pass [barcode:023DUA0147258963]\r\r\n  \(1)\UUT_SWT(1)\Qbarcode(*).........................Pass [00:00:00.000]\r\r\n\UUT_SWT&gt; ")
+    print(results[0])
+    print(results[1])

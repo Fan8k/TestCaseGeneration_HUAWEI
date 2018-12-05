@@ -12,8 +12,8 @@ class Rule(object):
 
     def __init__(self,context=None,original=None,to=None,location=None):
         '''
-        :param contexts: 一个规则的上下文
-        :param original: 原始的字符串
+        :param contexts: 一个规则的上下文 <前文，后文>
+        :param original: 原始的字符
         :param to: 原始字符串改成了什么字符串
         :param location 表示该规则来自哪个tps下哪个编码
         '''
