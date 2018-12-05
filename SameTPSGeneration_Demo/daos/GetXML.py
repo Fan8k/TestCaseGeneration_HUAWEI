@@ -8,60 +8,66 @@ cll:对于新的xml文件进行item提取
 class GetXML:
 
     @staticmethod
-    def read_file(location, filetype):
+    def read_file(self, filepath):
+
         path1 = os.path.abspath('..')
         print(path1)
-        xmlpath =path1+ '/datas/data/' + location + '/' + filetype + '/' + 'com.xml'
+        xmlpath =filepath+ 'com.xml'
         print(xmlpath)
+        item_list = []
         try:
 
             tree = ET.parse(xmlpath)
             root = tree.getroot()
             print(root.tag)
-            value = []
 
-            cmdtent = []
-            cmdstr = ''
-
-            responsestr = ''
             count = 0
             for item in root.findall('item'):
-                count += 2
-                response_text = item.find('response').text
+                cmdstr = ''
+                responsestr = ''
+
+                response_text = item.findall('response')
+                lenth = len(response_text)
+                for i in range(lenth):
+                    # print(tmp.text)
+
+                    if response_text[i].text != None:
+                        if response_text[i].text.find('\n') != -1 or response_text[i].text.find('..') != -1:
+                            response_content = response_text[i].text.replace('\n', '\\n').replace('..', '')
+                        responsestr = responsestr + response_content
+                        if i > 0 and i < lenth - 1:
+                            responsestr = responsestr + '||'
+
+                    else:
+                        responsestr = responsestr + 'None'
+                        if lenth > 1 and i + 1 < lenth:
+                            responsestr = responsestr + '||'
                 cmd_text = item.find('cmd').text
-                if cmd_text is not None:
+
+
+                if cmd_text != None:
                     if cmd_text.find('\n') != -1:
                         cmd_text = cmd_text.replace('\n', '\\n')
-                        cmdstr = cmdstr + cmd_text + '||'
-                        #cmdtent.append(cmd_text)
-                        #cmdtent.append("==")
-                    else:
-                        cmdstr = cmdstr + cmd_text + '||'
-                         #cmdtent.append(cmd_text)
-                         #cmdtent.append("==")
-                else:
-                    cmdstr = cmdstr + 'none' + '||'
 
-                    #cmdtent.append(cmd_text)
-                    #cmdtent.append("==")
-                if response_text is not None:
-                    if response_text.find('\n') != -1:
-                        response_text = response_text.replace('\n', '\\n').replace('..', '')
-                        responsestr = responsestr + response_text + '||'
-                        #value.append(response_text)
-                        #value.append("==")
-                    else:
-                        responsestr = responsestr + response_text + '||'
-                        #value.append(response_text)
-                        #value.append("==")
+                    cmdstr = cmdstr + cmd_text
+
+
+
                 else:
-                    responsestr = responsestr + response_text + '||'
-                    #value.append(response_text)
-                    #value.append("==")
+                    cmdstr = cmdstr + 'None'
+                S_info = Info(cmdstr, responsestr)
+                item_list.append(S_info)
+
         except Exception as e:
             print("open exception: %s: %s\n" %(e.errno, e.strerror))
-        return cmdstr, responsestr
+        return item_list
 
+
+class Info(object):
+
+    def __init__(self, cmd, response):
+        self.cmd = cmd
+        self.response = response
 
 def main():
     print("请输入TSP:")
