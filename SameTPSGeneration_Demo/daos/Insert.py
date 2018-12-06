@@ -1,9 +1,11 @@
 import xml.etree.ElementTree as ET
 import os
 import os.path
-
-
-from utils import MySqlConnectionFactory
+import json
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+print(sys.path)
+from utils.MySqlConnectionFactory import MysqlConnectFactory
 #class fileinfo:
 '''
 author:cll
@@ -18,7 +20,7 @@ class Insert:
         rootdir, filetypelist=self.filetype()
         #print(filetypelist)
         lenth=len(filetypelist)
-        Mysql_factory = MySqlConnectionFactory.MysqlConnectFactory()
+        Mysql_factory = MysqlConnectFactory()
         conn = Mysql_factory.get_connect()
 
         conn.set_charset('utf8')
@@ -37,64 +39,43 @@ class Insert:
         #effectRow = cur.rowcount
         #print(effectRow)
         '''
-        loca=str(1)#第一个文件夹数据
+        loca=str(5)#第一个文件夹数据
         for i in range(0, lenth):
                 xmlpath =rootdir + '/' + filetypelist[i] + '/' + 'uut-com.xml'
-                print(filetypelist[i])
+                #print(filetypelist[i])
 
                 tree = ET.parse(xmlpath)
                 root = tree.getroot()
 
-                cmdstr = ''
-
-                responsestr = ''
-                #respontent = []
-                #cmdtent = []
                 count = 0
+                tempDict = {}
+
                 for item in root.findall('item'):
-                    responsestr = responsestr + str(count)
-                    response_text = item.findall('response')
-                    for tmp in response_text:
-                        # print(tmp.text)
+                    response_list = []
+                    cmd_list = []
 
-                        if tmp.text != None:
-                            if tmp.text.find('\n') != -1 or tmp.text.find('..') != -1:
-                                response_content = tmp.text.replace('\n', '\\n').replace('..', '')
-                                responsestr = responsestr + response_content + '||'
-                                #value.append(response_content)
-                                #value.append("==")
-                            else:
-                                responsestr = responsestr + response_content + '||'
-                                #value.append(response_content)
-                                #value.append("==")
-                        else:
-                            responsestr = responsestr + 'none' + '||'
-                            #value.append(tmp.text)
-                            #value.append("==")
-                    cmd_text = item.find('cmd').text
-                    if cmd_text is not None:
-                        if cmd_text.find('\n') != -1:
-                            cmd_text = cmd_text.replace('\n', '\\n')
-                            cmdstr = cmdstr + cmd_text + '||'
-                            #cmdtent.append(cmd_text)
-                            #cmdtent.append("==")
-                        else:
-                            cmdstr = cmdstr + cmd_text + '||'
-                            #cmdtent.append(cmd_text)
-                            #cmdtent.append("==")
-                    else:
-                        cmdstr = cmdstr + 'none' + '||'
-                        #cmdtent.append(cmd_text)
-                        #cmdtent.append("==")
+                    # tempDict['id']=str(count)
+                    responseText = item.findall('response')
+                    cmdText = item.findall('cmd')
 
+                    for childText in responseText:  # 利用getchildren方法得到子节点
+                        # print(childNode.tag)
+                        response_list.append(self.str_process(childText.text))
+
+
+                    for childText in cmdText:
+                        cmd_list.append(self.str_process(childText.text))
+
+                    tempDict.update({count: {"cmd": cmd_list}})
+                    tempDict[count].update({"response": response_list})
+
+                    # tempJson = json.dumps(tempDict,ensure_ascii=False)
                     count += 1
-                responsestr = responsestr + str(count)
-                cmdstr = cmdstr + str(count)
-                value = (loca,filetypelist[i],cmdstr,responsestr)
-                print(cmdstr)
-                print("response内容：")
-                print(responsestr)
-                #cur.execute('insert into tsp_info values(null,%s,%s,%s,%s,0)', value)
+
+                tempJson = json.dumps(tempDict, ensure_ascii=False)#字典转str
+                value = (loca,filetypelist[i],tempJson)
+
+                cur.execute('insert into tsp_info values(null,%s,%s,%s,0)', value)
 
                 conn.commit()
 
@@ -103,11 +84,21 @@ class Insert:
         cur.close()
         conn.close()
 
+    def str_process(self, str1):
+        resStr = ''
+        if str1 != None:
+            if str1.find('\n') != -1 or str1.find('..') != -1:
+                response_content = str1.replace('\n', '\\n').replace('..', '')
+                resStr = resStr + response_content
 
 
-                    #return cmdtent,value
-              #except Exception, e:
-                #print("open exception: %s: %s\n" %(e.errno, e.strerror))
+            else:
+                resStr = resStr + str1
+
+        else:
+            resStr = resStr + 'None'
+        return resStr
+
 
     def filetype(self):
         path1 = os.path.abspath('..')

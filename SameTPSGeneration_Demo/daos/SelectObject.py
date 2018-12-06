@@ -1,8 +1,9 @@
 #coding=utf-8
 import os
+import json
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
+from models import Item
 from utils.MySqlConnectionFactory import MysqlConnectFactory
 '''
 author:cll
@@ -23,13 +24,18 @@ class SelectObject(object):
             conn=Mysql_factory.get_connect()
             cur=conn.cursor()
             item_list = []
-            sql="select cmd,response from tsp_info where location='%s' and type='%s' " % (location, type)
+            sql="select cmd_response from tsp_info where location='%s' and type='%s' " % (location, type)
             cur.execute(sql)
-            data=cur.fetchone()
-            #print(data[0])
-            #print(data[1])
-            item_list.append(data[0])
-            item_list.append(data[1])
+            data = cur.fetchone()
+
+            cmd_response_Info=json.loads(data[0])#字符串转换为字典
+
+            for i in range(len(cmd_response_Info)):
+                #cmd_response_Info[i]['cmd']
+                #print(cmd_response_Info[str(i)]["cmd"])
+                S_info = Item.Item(cmds=cmd_response_Info[str(i)]["cmd"], responses=cmd_response_Info[str(i)]["response"])
+                item_list.append(S_info)
+            print(item_list[1].responses)
             return item_list
 
 
@@ -38,7 +44,7 @@ def main():
     filetype = "001_normalTest"
     itemlist = SelectObject()
     item = itemlist.selected_object(location, filetype)
-    print(item)
+
 
 
 if __name__=='__main__':
