@@ -24,20 +24,26 @@ class SelectObject(object):
             conn=Mysql_factory.get_connect()
             cur=conn.cursor()
             item_list = []
-            sql="select cmd_response from tsp_info where location='%s' and type='%s' " % (location, type)
+            sql="select location,cmd_response from tsp_full_info where location='%s' and type='%s' " % (location, type)
             cur.execute(sql)
             data = cur.fetchone()
+            location = data[0]
 
-            cmd_response_Info=json.loads(data[0])#字符串转换为字典
+            cmd_response_Info=json.loads(data[1])#字符串转换为字典
 
             for i in range(len(cmd_response_Info)):
                 #cmd_response_Info[i]['cmd']
                 #print(cmd_response_Info[str(i)]["cmd"])
-                S_info = Item.Item(cmds=cmd_response_Info[str(i)]["cmd"], responses=cmd_response_Info[str(i)]["response"])
-                item_list.append(S_info)
-            print(item_list[1].responses)
-            return item_list
 
+                S_info = Item.Item(cmds=cmd_response_Info[str(i)]["cmd"],
+                                   responses=cmd_response_Info[str(i)]["response"], score=0, location_info=location,
+                                   num=i)
+                item_list.append(S_info)
+
+                # print(i)
+            return item_list
+            cur.close()
+            conn.close()
 
 def main():
     location = "1"

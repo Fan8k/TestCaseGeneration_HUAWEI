@@ -53,29 +53,27 @@ class Insert:
                 for item in root.findall('item'):
                     response_list = []
                     cmd_list = []
-
                     # tempDict['id']=str(count)
                     responseText = item.findall('response')
                     cmdText = item.findall('cmd')
 
                     for childText in responseText:  # 利用getchildren方法得到子节点
                         # print(childNode.tag)
-                        response_list.append(self.str_process(childText.text))
+                        response_list.append(self.str_process(childText.text, 0))
 
 
                     for childText in cmdText:
-                        cmd_list.append(self.str_process(childText.text))
+                        cmd_list.append(self.str_process(childText.text, 0))#0不删除...
 
                     tempDict.update({count: {"cmd": cmd_list}})
                     tempDict[count].update({"response": response_list})
-
-                    # tempJson = json.dumps(tempDict,ensure_ascii=False)
+                    #print(tempDict[count])
                     count += 1
 
                 tempJson = json.dumps(tempDict, ensure_ascii=False)#字典转str
                 value = (loca,filetypelist[i],tempJson)
 
-                cur.execute('insert into tsp_info values(null,%s,%s,%s,0)', value)
+                cur.execute('insert into tsp_full_info values(null,%s,%s,%s,0)', value)
 
                 conn.commit()
 
@@ -84,13 +82,16 @@ class Insert:
         cur.close()
         conn.close()
 
-    def str_process(self, str1):
+    def str_process(self, str1, flag):
         resStr = ''
         if str1 != None:
             if str1.find('\n') != -1 or str1.find('..') != -1:
-                response_content = str1.replace('\n', '\\n').replace('..', '')
-                resStr = resStr + response_content
-
+                if flag == 1:
+                    response_content = str1.replace('\n', '\\n').replace('..', '')
+                    resStr = resStr + response_content
+                else:
+                    response_content = str1.replace('\n', '\\n')
+                    resStr = resStr + response_content
 
             else:
                 resStr = resStr + str1
