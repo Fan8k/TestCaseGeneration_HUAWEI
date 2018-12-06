@@ -42,6 +42,7 @@ if __name__ =="__main__":
     before_context ="\\r\\nOK\\r\\r\\n\\r\\r\\n  \\(1)\\UUT_SWT(1)\\Qbarcode(1).........................Pass [00:00:00.000]\\r\\r\\n  qbarcode............................................Pass [barcode:023DUA0147258"
     after_context = "]\\r\\r\\n  \\(1)\\UUT_SWT(1)\\Qbarcode(*).........................Pass [00:00:00.000]\\r\\r\\n\\UUT_SWT&gt; "
     rules = [Rule((before_context,after_context),'369','963','1'),Rule((before_context,after_context),'369','963','1'),Rule((before_context,after_context),'369','964','1'),Rule((before_context,after_context),'368','963','1')]
+    #上面假设来自提取规则ExtractRules 这个类拿到的所有的原始规则集合。
     rules = RuleDecorater.rule_word_decorater(r"\[barcode:",rules)
     print(rules)
     rules = RuleMerger.mergeredBy_contextOrigin(rules)

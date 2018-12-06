@@ -14,13 +14,16 @@ from services.RulesSolver import RulesSolver
 从items中提取规则
 '''
 
-class ExtractRules:
+class ExtractRuler:
 
     st = SelectObject()
     md5 = MD5()
     differ = difflib.Differ()
     cs = ContextSolver()
     rs = RulesSolver()
+
+    def __init__(self):
+        self.location = '-1'
 
     def _get_items(self,location,type):
         '''
@@ -29,7 +32,7 @@ class ExtractRules:
         :return: 从数据库中获取到的item对象
         '''
         self.location = location
-        return ExtractRules.st.selected_object(location,type)
+        return ExtractRuler.st.selected_object(location,type)
 
     def _get_rules(self,proto_items,model_items):
         rules = []
@@ -45,13 +48,13 @@ class ExtractRules:
             model_item = model_items[index]
             for response_index in range(len(pri_item.responses)):
                 #对应的item对象的response字符串
-                pri_response_str = ExtractRules.md5.encode(pri_item.responses[response_index])
-                model_response_str = ExtractRules.md5.encode(model_item.responses[response_index])
+                pri_response_str = ExtractRuler.md5.encode(pri_item.responses[response_index])
+                model_response_str = ExtractRuler.md5.encode(model_item.responses[response_index])
                 if pri_response_str != model_response_str:
                      #找出修改点及其在原来字符串中的位置信息
-                     results = self._find_change_points(pri_response_str,model_response_str)
-                     results[0] = ExtractRules.cs.between_changes_context(results[0],len(results[1]))
-                     rules.extend(ExtractRules.rs.pack_rules(results[0],results[1],self.location))
+                     results = self._find_change_points(pri_item.responses[response_index],model_item.responses[response_index])
+                     _contexts = ExtractRuler.cs.between_changes_context(results[0],len(results[1]))
+                     rules.extend(ExtractRuler.rs.pack_rules(_contexts,results[1],self.location))
         return rules
 
     def _find_change_points(self,pri_response_str,model_response_str):
@@ -62,7 +65,7 @@ class ExtractRules:
         :return:（[<from:to>,<from,to>],[common context，common context，common context]）
         '''
 
-        results = ExtractRules.differ.compare(pri_response_str,model_response_str)
+        results = ExtractRuler.differ.compare(pri_response_str,model_response_str)
         '''
           '- '	line unique to sequence 1
           '+ '	line unique to sequence 2
@@ -151,8 +154,8 @@ class ExtractRules:
         return rules
 
 if __name__ =="__main__":
-    ex = ExtractRules()
-    results=ex._find_change_points(r"\r\nOK\r\r\n\r\r\n  \(1)\UUT_SWT(1)\Qbarcode(1).........................Pass [00:00:00.000]\r\r\n  qbarcode............................................Pass [barcode:023DUA0147258369]\r\r\n  \(1)\UUT_SWT(1)\Qbarcode(*).........................Pass [00:00:00.000]\r\r\n\UUT_SWT&gt; ",
-                                   r"\r\nOK\r\r\n\r\r\n  \(1)\UUT_SWT(1)\Qbarcode(1).........................Pass [00:00:00.000]\r\r\n  qbarcode............................................Pass [barcode:023DUA0147258963]\r\r\n  \(1)\UUT_SWT(1)\Qbarcode(*).........................Pass [00:00:00.000]\r\r\n\UUT_SWT&gt; ")
+    ex = ExtractRuler()
+    results=ex._find_change_points(r"\r\r\n  \(1)\UUT_SWT(1)\BiosCheck(1)Pass [00:00:00.000]\r\r\n  bios_checkPass [Pass]\r\r\n  \(1)\UUT_SWT(1)\BiosCheck(*)Pass [00:00:00.000]\r\r\n\UUT_SWT&gt; ",
+                                   r"\r\r\n  \(1)\UUT_SWT(1)\BiosCheck(1)Fail [00:00:00.000]\r\r\n  bios_checkFail [.Fail ]\r\r\n  \(1)\UUT_SWT(1)\BiosCheck(*)Fail [00:00:00.000]\r\r\n\UUT_SWT&gt; ")
     print(results[0])
     print(results[1])

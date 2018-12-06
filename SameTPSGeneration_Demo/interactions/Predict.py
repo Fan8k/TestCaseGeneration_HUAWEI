@@ -2,9 +2,12 @@
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from services.DataMatch import DataMatch
-from services.ExtractRules import ExtractRules
+from services.DataMatcher import DataMatcher
+from services.ExtractRuler import ExtractRuler
 from utils.ExtractLocationInfo import ExtractLocationInfo
+from services.RuleDecorater import RuleDecorater
+from services.RuleMerger import RuleMerger
+
 '''
 输入原型组数据预测生成相应的模型组数据
 '''
@@ -18,9 +21,12 @@ class Predict:
         :param rules: 所用到的规则
         :yield 每次更新一个item就返回生成
         '''
-        dataMatch = DataMatch(path)
-        yield dataMatch.match(rules)
+        dataMatch = DataMatcher(path)
+        yield from dataMatch.match(rules)
 
+    def test(self,proto_items,rules):
+        dataMatch = DataMatcher("")
+        yield from dataMatch._match_item(proto_items,rules)
 
 if __name__ == "__main__":
     path = "想要预测的文件的绝对路径"
@@ -31,8 +37,17 @@ if __name__ == "__main__":
     #选择的目标编码
     aim_location = location[0]
     proto_type, model_types=ExtractLocationInfo.filter_proto_type(tps[aim_location],'001_normalTest')
-    extractRuler = ExtractRules()
+    extractRuler = ExtractRuler()
     #整个编码下所有的规则
     encode_rules = extractRuler.get_encode_rules(aim_location,proto_type,model_types)
+    #原始规则进行装饰和合并
+    #这里只是进行barcode 单词装饰
+    rules = RuleDecorater.rule_word_decorater(r"\[barcode:", encode_rules)
+    #装饰之后需要进行按照上下文和from进行合并 提成更普通的规则
+    common_rules = RuleMerger.mergeredBy_contextOrigin(rules)
+    print(common_rules[1])
+    print(common_rules[0].random_choice_to())
     predicter = Predict()
-    predicter.predict(path,encode_rules)
+
+    for xml in predicter.predict(path,common_rules):
+        print(xml)
