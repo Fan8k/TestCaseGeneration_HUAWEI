@@ -29,7 +29,7 @@ class SelectObject(object):
             data = cur.fetchone()
             location = data[0]
 
-            cmd_response_Info=json.loads(data[1])#字符串转换为字典
+            cmd_response_Info = json.loads(data[1])#字符串转换为字典
 
             for i in range(len(cmd_response_Info)):
                 #cmd_response_Info[i]['cmd']

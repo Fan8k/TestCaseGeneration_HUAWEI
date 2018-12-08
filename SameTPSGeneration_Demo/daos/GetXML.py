@@ -14,7 +14,7 @@ class GetXML:
         #filepath是待提取的XML的绝对路径
         path1 = os.path.abspath('..')
 
-        #xmlpath =filepath+ '/com.xml'
+        #xmlpath =filepath+ '.xml'
         #print(xmlpath)
         item_list = []
 
@@ -51,8 +51,7 @@ class GetXML:
                 S_info = Item.Item(cmds=cmd_list, responses=response_list, score=0, location_info=None, num=count)
 
                 item_list.append(S_info)
-                print(item_list[count].cmds)
-                print(item_list[count].responses)
+
                 count += 1
 
         except Exception as e:
@@ -81,7 +80,7 @@ class GetXML:
 
 def main():
     path1 = os.path.abspath('..')
-    # print(path1)
+
     rootdir = path1 + '/datas/data' + '/1'+'/001_normalTest'
 
 
