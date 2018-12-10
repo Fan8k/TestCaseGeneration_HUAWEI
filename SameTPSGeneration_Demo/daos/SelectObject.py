@@ -22,9 +22,17 @@ class SelectObject(object):
         def selected_object(self,location,type):
             Mysql_factory = MysqlConnectFactory()
             conn=Mysql_factory.get_connect()
-            cur=conn.cursor()
+            conn.set_charset('utf8')
+            cur = conn.cursor()
+            cur.execute('SET NAMES utf8;')
+            cur.execute('SET CHARACTER SET utf8;')
+            cur.execute('SET character_set_connection=utf8;')
+
             item_list = []
             sql="select location,cmd_response from tsp_full_info where location=%s and type=%s"
+
+
+
             cur.execute(sql,(location,type))
             data = cur.fetchone()
             location = data[0]

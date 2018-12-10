@@ -15,6 +15,7 @@ class DataMatcher(object):
     def __init__(self,new_proto_type_path):
         #这个就是需要预测生成的原型组路径
         self._proto_type = new_proto_type_path
+        self._getXml = GetXML()
 
     def match(self,rules=[]):
         '''
@@ -30,7 +31,7 @@ class DataMatcher(object):
         :return: 包装好的items集合
         '''
         # 需要预测的原型组数据items
-        proto_items = GetXML.read_file(self._proto_type)
+        proto_items = self._getXml.read_file(self._proto_type)
         yield from self._match_item(proto_items,rules)
 
     def _match_item(self,proto_items,rules=[]):

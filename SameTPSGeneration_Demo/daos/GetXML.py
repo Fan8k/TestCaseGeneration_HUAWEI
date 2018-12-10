@@ -81,12 +81,13 @@ class GetXML:
 def main():
     path1 = os.path.abspath('..')
 
-    rootdir = path1 + '/datas/data' + '/1'+'/001_normalTest'
+    rootdir = path1 + '/datas/data' + '/2'+'/001_normalTest/uut_com.xml'
 
 
     get_xml = GetXML()
-    get_xml.read_file(rootdir)
-
+    items = get_xml.read_file(rootdir)
+    for item in items:
+        print(item)
 
 if __name__=='__main__':
     main()

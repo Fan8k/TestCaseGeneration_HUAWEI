@@ -150,6 +150,7 @@ class ExtractRuler:
         :return:整个编码下所有的规则
         '''
         for model_type in model_types:
+            print(location,pri_type,model_type)
             rules.extend(self.get_File_rules(location,pri_type,model_type))
         return rules
 

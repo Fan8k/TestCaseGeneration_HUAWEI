@@ -29,7 +29,7 @@ class Predict:
         yield from dataMatch._match_item(proto_items,rules)
 
 if __name__ == "__main__":
-    path = "/home/inspur/li/SameTPSGeneration_Demo/datas/data/1/001_normalTest/com.xml"
+    path = "/home/inspur/li/SameTPSGeneration_Demo/datas/data/2/001_normalTest/uut_com.xml"
     #tps下
     tps = ExtractLocationInfo.extract_location_and_type_info(r"/home/inspur/li/SameTPSGeneration_Demo/datas/data")
     #某一个编码 比如编码1 下面的原型组 001_normalTest
@@ -45,9 +45,18 @@ if __name__ == "__main__":
     rules = RuleDecorater.rule_word_decorater(r"\[barcode:", encode_rules)
     #装饰之后需要进行按照上下文和from进行合并 提成更普通的规则
     common_rules = RuleMerger.mergeredBy_contextOrigin(rules)
-    print(common_rules[1])
-    print(common_rules[0].random_choice_to())
-    predicter = Predict()
 
-    for xml in predicter.predict(path,common_rules):
-        print(xml)
+    print("通用规则")
+    print(common_rules)
+    for com in common_rules:
+        print(com)
+    print("预测\n\n")
+
+    predicter = Predict()
+    count = 0
+    for items in predicter.predict(path,common_rules):
+        count+=1
+        for item in items:
+            print(item)
+        print("\n\n")
+    print(count)
