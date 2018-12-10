@@ -32,15 +32,14 @@ class SelectObject(object):
             cmd_response_Info = json.loads(data[1])#字符串转换为字典
 
             for i in range(len(cmd_response_Info)):
-                #cmd_response_Info[i]['cmd']
-                #print(cmd_response_Info[str(i)]["cmd"])
+
 
                 S_info = Item.Item(cmds=cmd_response_Info[str(i)]["cmd"],
                                    responses=cmd_response_Info[str(i)]["response"], score=0, location_info=location,
                                    num=i)
                 item_list.append(S_info)
 
-                # print(i)
+
             return item_list
             cur.close()
             conn.close()
