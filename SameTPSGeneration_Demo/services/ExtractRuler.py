@@ -150,13 +150,12 @@ class ExtractRuler:
         :return:整个编码下所有的规则
         '''
         for model_type in model_types:
-            print(location,pri_type,model_type)
             rules.extend(self.get_File_rules(location,pri_type,model_type))
         return rules
 
 if __name__ =="__main__":
     ex = ExtractRuler()
-    results=ex._find_change_points(r"\r\r\n  \(1)\UUT_SWT(1)\BiosCheck(1)Pass [00:00:00.000]\r\r\n  bios_checkPass [Pass]\r\r\n  \(1)\UUT_SWT(1)\BiosCheck(*)Pass [00:00:00.000]\r\r\n\UUT_SWT&gt; ",
-                                   r"\r\r\n  \(1)\UUT_SWT(1)\BiosCheck(1)Fail [00:00:00.000]\r\r\n  bios_checkFail [.Fail ]\r\r\n  \(1)\UUT_SWT(1)\BiosCheck(*)Fail [00:00:00.000]\r\r\n\UUT_SWT&gt; ")
+    results=ex._find_change_points("\\r\\nOK\\r\\r\\n\\r\\r\\n  \\(1)\\UUT_SWT(1)\\Version(1)..........................Pass [00:00:00.000]\\r\\r\\n  Version.............................................Pass [713]\\r\\r\\n  \\(1)\\UUT_SWT(1)\\Version(*)..........................Pass [00:00:00.000]\\r\\r\\n\\UUT_SWT> ",
+                                   r"\\r\\nOK\\r\\r\\n\\r\\r\\n  \\(1)\\UUT_SWT(1)\\Version(1)..........................Fail[00:00:00.000]\\r\\r\\n  Version.............................................Pass [714]\\r\\r\\n  \\(1)\\UUT_SWT(1)\\Version(*)..........................Fail[00:00:00.000]\\r\\r\\n\\UUT_SWT> ")
     print(results[0])
     print(results[1])

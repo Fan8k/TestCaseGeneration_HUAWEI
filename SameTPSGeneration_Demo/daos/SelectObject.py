@@ -30,9 +30,6 @@ class SelectObject(object):
 
             item_list = []
             sql="select location,cmd_response from tsp_full_info where location=%s and type=%s"
-
-
-
             cur.execute(sql,(location,type))
             data = cur.fetchone()
             location = data[0]
