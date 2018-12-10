@@ -29,7 +29,7 @@ class Predict:
         yield from dataMatch._match_item(proto_items,rules)
 
 if __name__ == "__main__":
-    path = "想要预测的文件的绝对路径"
+    path = "/home/inspur/li/SameTPSGeneration_Demo/datas/data/1/001_normalTest/com.xml"
     #tps下
     tps = ExtractLocationInfo.extract_location_and_type_info(r"/home/inspur/li/SameTPSGeneration_Demo/datas/data")
     #某一个编码 比如编码1 下面的原型组 001_normalTest

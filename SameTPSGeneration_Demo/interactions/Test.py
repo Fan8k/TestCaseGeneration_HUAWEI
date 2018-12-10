@@ -32,6 +32,7 @@ def create_predict_item():
     predict_items.append(Item([r'test multicore\r'], [r'\r\nOK\r\r\n\r\r\n  \(1)\UUT_SWT(1)\Multicore(1)Pass [00:00:00.000]\r\r\n  multi_core0Pass [Pass]\r\r\n  multi_core1Pass [Pass]\r\r\n  multi_core2Pass [Pass]\r\r\n  multi_core3Pass [Pass]\r\r\n  \(1)\UUT_SWT(1)\Multicore(*)Pass [00:00:00.000]\r\r\n\UUT_SWT&gt; '], 0, '1', 3))
     predict_items.append(Item([r'test BiosCheck\r'], [r'\r\nOK\r\r\n',r'\r\r\n  \(1)\UUT_SWT(1)\BiosCheck(1)Pass [00:00:00.000]\r\r\n  bios_checkPass [Pass]\r\r\n  \(1)\UUT_SWT(1)\BiosCheck(*)Pass [00:00:00.000]\r\r\n\UUT_SWT&gt; '], 0, '1', 4))
     return predict_items
+
 if __name__ == "__main__":
     proto_items, model_items = create_item()
     extractRuler = ExtractRuler()
