@@ -24,8 +24,8 @@ class SelectObject(object):
             conn=Mysql_factory.get_connect()
             cur=conn.cursor()
             item_list = []
-            sql="select location,cmd_response from tsp_full_info where location='%s' and type='%s' " % (location, type)
-            cur.execute(sql)
+            sql="select location,cmd_response from tsp_full_info where location=%s and type=%s"
+            cur.execute(sql,(location,type))
             data = cur.fetchone()
             location = data[0]
 
@@ -39,17 +39,16 @@ class SelectObject(object):
                                    num=i)
                 item_list.append(S_info)
 
-
-            return item_list
             cur.close()
             conn.close()
+            return item_list
 
 def main():
     location = "1"
     filetype = "001_normalTest"
     itemlist = SelectObject()
     item = itemlist.selected_object(location, filetype)
-
+    print(item)
 
 
 if __name__=='__main__':
