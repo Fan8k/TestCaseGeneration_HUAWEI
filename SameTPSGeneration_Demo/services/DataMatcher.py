@@ -34,6 +34,18 @@ class DataMatcher(object):
         proto_items = self._getXml.read_file(self._proto_type)
         yield from self._match_item(proto_items,rules)
 
+    def _translate_original(self,original:str):
+        '''
+        因为匹配方式是先找修改点，然后从修改点左右来匹配context，从response中找修改点（但是修改点中有[,],(,)等元字符）就把他们当成了有意义的元字符了，而不是咱们想要的
+        普通字符，所以需要把[替换成'\['才行，但是这又有一个问题就是引入了\,\
+        :param original: ^ $ * + ? {} [] | () \ .  包含元字符
+        :return: 把元字符前加上转义符号\，变成非转义字符\
+        '''
+        meta_words = ['\\',']','{','}','^','$','*','+','?','(',')','.','[']
+        for meta_word in meta_words:
+            original = original.replace(meta_word,'\%s'%meta_word)
+        return original
+
     def _match_item(self,proto_items,rules=[]):
         # 开始每个item的每个response进行匹配任务
         for index, item in enumerate(proto_items):
@@ -43,13 +55,15 @@ class DataMatcher(object):
             temp = copy.deepcopy(item)
             for response_index, _response in enumerate(temp.responses):
                 # 应用规则 先找有无修改点，然后匹配上下文，最后随机选择一个to
+                if _response=='None':
+                    continue
                 _commonRule_point={}
                 _change_point_location = []
                 # 默认没有response修改过
                 response_changed_flag = False
                 for _commonRule in rules:
                     # 所有修改点集合
-                    _originals = [i for i in re.finditer(_commonRule.original, _response)]
+                    _originals = [i for i in re.finditer(self._translate_original(_commonRule.original), _response)]
                     if len(_originals)>0:
                       _commonRule_point[_commonRule] = _originals
                 _response_len = len(_response)
@@ -116,3 +130,6 @@ if __name__ =="__main__":
     change_points_location = [(2,4,'wo'),(4,8,'ni')]
     da = DataMatcher("fd")
     print(da._change_strValue(response,change_points_location))
+    print([i for i in re.finditer("Pass\[pass","fdafdfPass[pass]pass")])
+    print(da._translate_original("[fadfdsaf]fdaf(fda)fdfsaf{fdafds}fdasf\fdsafdsa.\\"))
+    print('Pass\[pass')
