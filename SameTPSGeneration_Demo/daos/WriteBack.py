@@ -29,5 +29,5 @@ class WriteBack():
             templist=itemlist[count].reponses
             for i in range(len(reponse_text)):
                 reponse_text[i].text=templist[i]
-            tree.write(path1+'\\datas\\data\\new'+str(count)+'.xml')
+            tree.write(path1+'\\new'+os.path.basename(filepath))
             count+=1
