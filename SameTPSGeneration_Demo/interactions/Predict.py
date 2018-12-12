@@ -8,6 +8,8 @@ from utils.ExtractLocationInfo import ExtractLocationInfo
 from services.RuleDecorater import RuleDecorater
 from services.RuleMerger import RuleMerger
 from daos.GetXML import GetXML
+from daos.WriteBack import WriteBack
+import time
 '''
 输入原型组数据预测生成相应的模型组数据
 '''
@@ -50,19 +52,24 @@ if __name__ == "__main__":
     print(common_rules)
     for com in common_rules:
         print(com)
+
     print("预测\n\n")
 
     predicter = Predict()
-    count = 0
-    for items in predicter.predict(path,common_rules):
-        count+=1
-        for item in items:
-            print(item)
-        print("\n\n")
-    print(count)
+    wb = WriteBack()
+    parent_path = "/home/inspur/li/SameTPSGeneration_Demo/datas/Prections/"
+    for items in predicter.predict(path, common_rules):
+        wb.newxml(items,parent_path+str(time.time())+".xml")
+    # count = 0
+    # for items in predicter.predict(path,common_rules):
+    #     count+=1
+    #     for item in items:
+    #         print(item)
+    #     print("\n\n")
+    # print(count)
 
-    print("\n\n")
-    get_xml = GetXML()
-    items = get_xml.read_file(path)
-    for item in items:
-        print(item)
+    # print("\n\n")
+    # get_xml = GetXML()
+    # items = get_xml.read_file(path)
+    # for item in items:
+    #     print(item)

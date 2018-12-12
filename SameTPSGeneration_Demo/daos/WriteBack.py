@@ -3,13 +3,7 @@ import sys
 import os
 import os.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from services.DataMatcher import DataMatcher
-from services.ExtractRuler import ExtractRuler
-from utils.ExtractLocationInfo import ExtractLocationInfo
-from services.RuleDecorater import RuleDecorater
-from services.RuleMerger import RuleMerger
-from interactions.Predict import Predict
-from models.Item import Item
+
 
 class WriteBack():
     def newxml(self,itemlist=[],filepath=None):
