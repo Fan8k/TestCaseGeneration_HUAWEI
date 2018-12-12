@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 import sys
 import os
+import uuid
 import os.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -13,18 +14,20 @@ class WriteBack():
         '''
 
         path1 = os.path.abspath('..')
-        print(path1)
+       # print(path1)
         # print(path1)
         rootdir = filepath
         tree = ET.parse(filepath)
         root = tree.getroot()
         count = 0
+        uuid_str = uuid.uuid4().hex
         for item in root.findall('item'):
             reponse_text=item.findall('response')
             templist=itemlist[count].reponses
             for i in range(len(reponse_text)):
                 reponse_text[i].text=templist[i]
-            tree.write(path1+'datas\\data\\new'+os.path.basename(filepath))
+
+            tree.write(path1+'datas\\data\\new'+uuid_str+os.path.basename(filepath))
             count+=1
 
 def main():
