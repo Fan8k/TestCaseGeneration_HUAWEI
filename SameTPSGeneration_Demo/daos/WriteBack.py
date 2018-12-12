@@ -12,13 +12,14 @@ from interactions.Predict import Predict
 from models.Item import Item
 
 class WriteBack():
-    def newxml(self,itemlist[],filepath):
+    def newxml(self,itemlist=[],filepath=None):
         '''
         itemlist[]：传入itemlist集合
         filepath：传入的原型xml的完整路径
         '''
 
         path1 = os.path.abspath('..')
+        print(path1)
         # print(path1)
         rootdir = filepath
         tree = ET.parse(filepath)
@@ -29,5 +30,19 @@ class WriteBack():
             templist=itemlist[count].reponses
             for i in range(len(reponse_text)):
                 reponse_text[i].text=templist[i]
-            tree.write(path1+'\\new'+os.path.basename(filepath))
+            tree.write(path1+'datas\\data\\new'+os.path.basename(filepath))
             count+=1
+
+def main():
+    # print("是否执行此程序")
+    # command = input()
+    path1 = os.path.abspath('..')
+    print(path1)
+    # writeback= WriteBack()
+    # writeback.newxml()
+
+
+
+
+if __name__=='__main__':
+    main()
