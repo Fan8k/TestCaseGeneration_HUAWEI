@@ -41,7 +41,8 @@ if __name__ == "__main__":
             ws.write(index, 1, rule.context[1])
             ws.write(index, 2, rule.original)
             ws.write(index, 3, rule.to)
-
+            ws.write(index, 4, rule.location)
+            ws.write(index,5,rule.file_name)
     ws = wb.add_sheet('all_code')
     bias = 0
     for i in location:

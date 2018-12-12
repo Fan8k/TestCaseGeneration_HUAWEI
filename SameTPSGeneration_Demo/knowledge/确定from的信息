@@ -1,0 +1,18 @@
+#信息中很多barcode
+[barcode:023DUA0147258963] 只是修改后面的两个数字所以from 必须扩充到整个编码023DUA0147258963 而不仅仅是from，这样很难做到匹配
+['',from=barcode,to:任意值]  这个地方需要升级，因为如果只是按照023DUA0147258963很难匹配到,所以只能确定from为barcode
+
+Pass [715]  ===—》Pass [720] 这种肯定不能把context定义为Pass[ ，因为太多这样的模式
+
+date:2018-03-28 time:17:24:54  [date:1000-03-28 time:17:24:54]
+
+Pass [210] ====> Fail[211]
+
+[NORMAL Cur:55 Major:95 Fatal:105]\\r\\r\\n  lsw_temp ===> Fail[NORMAL Cur:106 Major:95 Fatal:105]\\r\\r\\n  lsw_temp
+
+barcode:025BSS0123456789 === > barcode:025BSS0123456788
+
+Pass [713]=====>Pass [714]
+
+问题：对于pass这种很难停止，而且很多位置都有cur，barcode，pass 是否真的完全不要context，碰见barcode就改真的可行？
+所以我需要完全抽离开这些方法，后期随时好扯开！

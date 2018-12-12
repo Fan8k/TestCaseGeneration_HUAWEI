@@ -6,6 +6,7 @@ import copy
 import re
 
 from daos.GetXML import GetXML
+from preprocess.StrProcess import StrProcess
 '''
 数据匹配:该模块拿到对应的规则集合，然后进行原数据规则匹配.
 '''
@@ -16,6 +17,7 @@ class DataMatcher(object):
         #这个就是需要预测生成的原型组路径
         self._proto_type = new_proto_type_path
         self._getXml = GetXML()
+        self._sp = StrProcess()
 
     def match(self,rules=[]):
         '''
@@ -46,9 +48,18 @@ class DataMatcher(object):
             original = original.replace(meta_word,'\%s'%meta_word)
         return original
 
-    def _match_item(self,proto_items,rules=[]):
+    def _match_item_deprecated(self,proto_items,rules=[]):
+        '''
+        该方法的思路先找response有无一个修改规则的修改点，如果看是否上下文满足，满足先统计起来，
+        所有修改点都统计完毕之后，统一的进行修改，这个方法没有考虑到规则的context和新来的response的context不同的情况
+        比如：规则中context没有点，但是新来的response信息都是有点的，所以他们之间如何来回切换很重要
+        :param proto_items:
+        :param rules:
+        :return:
+        '''
         # 开始每个item的每个response进行匹配任务
         for index, item in enumerate(proto_items):
+
             #默认没有修改过
             item_changed_flag = False
             # 先深度拷贝一份
@@ -99,6 +110,80 @@ class DataMatcher(object):
                yield proto_items
                proto_items[index] = pri_item
         #结束标记 不管有没有数据了
+        return None
+
+    def _match_item(self, proto_items, rules=[]):
+        '''
+        该方法的思路先找response有无一个修改规则的修改点，如果看是否上下文满足，满足先统计起来，
+        所有修改点都统计完毕之后，统一的进行修改.重要修改点，规则context没有点，预测response有点，怎么匹配的问题
+        :param proto_items:
+        :param rules:
+        :return:
+        '''
+        # 开始每个item的每个response进行匹配任务
+        for index, item in enumerate(proto_items):
+            # 默认没有修改过
+            item_changed_flag = False
+            # 先深度拷贝一份
+            temp = copy.deepcopy(item)
+            for response_index, _response in enumerate(temp.responses):
+                # 应用规则 先找有无修改点，然后匹配上下文，最后随机选择一个to
+
+                if _response == 'None':
+                    continue
+                _commonRule_point = {}
+                _change_point_location = []
+                # 默认没有response修改过
+                response_changed_flag = False
+                #做过预处理的response信息
+                temp_response = self._sp.str_process(_response, 1)
+                for _commonRule in rules:
+                    # 所有修改点集合
+                    _originals = [i for i in re.finditer(self._translate_original(_commonRule.original), _response)]
+                    #多加一个在处理过干扰项比如点的response中的修改点位置信息，这样匹配到底改不改用这些修改点集合信息，然后具体修改时用上面的点的信息
+                    _preprocess_originals = [i for i in re.finditer(self._translate_original(_commonRule.original), temp_response)]
+                    if len(_originals) > 0:
+                        _commonRule_point[_commonRule] = (_originals,_preprocess_originals)
+
+                #判断修改点到底要不要改,是利用的是去掉干扰字符的新的response信息
+                _response_len = len(temp_response)
+                for _commonRule, _change_points in _commonRule_point.items():
+                    #修改点的索引
+                    for _change_point_index,_preprocess_original in enumerate(_change_points[1]):
+                        start_index, stop_index = _preprocess_original.span()
+                        # 前上下文长度
+                        b_context_len = len(_commonRule.context[0])
+                        # 不符合无需匹配
+                        if b_context_len > start_index:
+                            continue
+                        else:
+                            a_context_len = len(_commonRule.context[1])
+                            # 后面的上下文都不够长，说明肯定不匹配
+                            if a_context_len > ((_response_len + 1) - stop_index):
+                                continue
+                            else:
+                                if _commonRule.context[0] == temp_response[start_index - b_context_len:start_index] and \
+                                        _commonRule.context[1] == temp_response[stop_index:stop_index + a_context_len]:
+                                    # 不能立马就改，因为后来的修改也是按照之前的模式匹配找到的位置，一改位置就乱了，只能先记住那些点要改
+                                    _real_start_index,_real_stop_index = _change_points[0][_change_point_index].span()
+                                    _change_point_location.append(
+                                        (_real_start_index,_real_stop_index, _commonRule.random_choice_to()))
+                                    if response_changed_flag == False:
+                                        response_changed_flag = True
+                                        item_changed_flag = True
+                #这是整个response修改完毕才替换
+                if response_changed_flag:
+                    _change_point_location = sorted(_change_point_location, key=lambda a: a[0])
+                    _response = self._change_strValue(_response, _change_point_location)
+                    temp.responses[response_index] = _response
+                    print("修改第%s个item的%s的response" % (temp.num, response_index))
+            #整个item都修改完毕，才进行item替换
+            if item_changed_flag:
+                pri_item = proto_items[index]
+                proto_items[index] = temp
+                yield proto_items
+                proto_items[index] = pri_item
+        # 结束标记 不管有没有数据了
         return None
 
     def _change_strValue(self,pri_str,change_points_location):

@@ -1,6 +1,7 @@
 #coding=utf-8
 import os
 import sys
+import difflib
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from services.DataMatcher import DataMatcher
 from services.ExtractRuler import ExtractRuler
@@ -8,6 +9,7 @@ from utils.ExtractLocationInfo import ExtractLocationInfo
 from services.RuleDecorater import RuleDecorater
 from services.RuleMerger import RuleMerger
 from interactions.Predict import Predict
+from preprocess.StrProcess import StrProcess
 
 
 def _find_change_points(pri_response_str, model_response_str):
@@ -92,7 +94,12 @@ def _find_change_points(pri_response_str, model_response_str):
 
 if __name__ =="__main__":
     ex = ExtractRuler()
-    results=_find_change_points("\\r\\r\\n  \\(1)\\UUT_SWT(1)\\LSWTableTest(1)Pass [00:00:00.000]\\r\\r\\n  KAPS_Chip0Pass [Pass]\\r\\r\\n  \\(1)\\UUT_SWT(1)\\LSWTableTest(*)Pass [00:00:00.000]\\r\\r\\n\\UUT_SWT> ",
-                                   "\\r\\r\\n  \\(1)\\UUT_SWT(1)\\LSWTableTest(1)Pass [00:00:00.000]\\r\\r\\n  KAPS_Chip0Fail[Fail]\\r\\r\\n  \\(1)\\UUT_SWT(1)\\LSWTableTest(*)Pass [00:00:00.000]\\r\\r\\n\\UUT_SWT> ")
+    results=_find_change_points(r"Pass [00:00:02.000]\r\r\n  link_gePass[Pass]\r\r\n  link_10gePass [Pass]\r\r\n  link_40gePass [Pass]\r\r\n  10ge_offlinePass [Pass]\r\r\n  10ge_txdisPass [Pass]\r\r\n  10ge_txenPass [Pass]\r\r\n  10ge_i2cPass [Pass]\r\r\n  10ge_qrylos.........................................Pass [Pass]\r\r\n  40ge_offline........................................Pass [Pass]\r\r\n  40ge_i2c............................................Pass [Pass]\r\r\n  40ge_txdis..........................................Pass [Pass]\r\r\n  40ge_txen...........................................Pass [Pass]\r\r\n  40ge_qrylos.........................................Pass [Pass]\r\r\n  1ge_port_status.....................................Pass [Pass]\r\r\n  10ge_port_status....................................Pass [Pass]\r\r\n  40ge_port_status....................................Pass [Pass]\r\r\n  \(1)\UUT_SWT(1)\Link(*).............................Pass [00:00:02.000]\r\r\n\UUT_SWT&gt; ",
+                                   r"Pass [00:00:02.000]\r\r\n  link_geFail[Pass]\r\r\n  link_10geFail [Pass]\r\r\n  link_40gePass [Pass]\r\r\n  10ge_offlinePass [Pass]\r\r\n  10ge_txdisFail [Pass]\r\r\n  10ge_txenPass [Pass]\r\r\n  10ge_i2cPass [Pass]\r\r\n  10ge_qrylos.........................................Pass [Pass]\r\r\n  40ge_offline........................................Pass [Pass]\r\r\n  40ge_i2c............................................Pass [Pass]\r\r\n  40ge_txdis..........................................Fail [Pass]\r\r\n  40ge_txen...........................................Pass [Pass]\r\r\n  40ge_qrylos.........................................Pass [Pass]\r\r\n  1ge_port_status.....................................Pass [Pass]\r\r\n  10ge_port_status....................................Pass [Pass]\r\r\n  40ge_port_status....................................Pass [Pass]\r\r\n  \(1)\UUT_SWT(1)\Link(*).............................Fail [00:00:02.000]\r\r\n\UUT_SWT&gt; ")
     print(results[0])
     print(results[1])
+    a = "321...............321"
+    b = a
+    sp = StrProcess()
+    print(sp.str_process(b,1))
+    print(a)

@@ -1,6 +1,7 @@
 #coding=utf-8
 import os
 import sys
+import difflib
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from services.DataMatcher import DataMatcher
 from services.ExtractRuler import ExtractRuler
@@ -26,8 +27,8 @@ def create_item():
     # model_items.append(Item([r'test qbarcode\r'], [r'\r\nOK\r\r\n\r\r\n  \(1)\UUT_SWT(1)\Qbarcode(1)Pass [00:00:00.000]\r\r\n  qbarcodePass [barcode:023DUA0147258963]\r\r\n  \(1)\UUT_SWT(1)\Qbarcode(*)Pass [00:00:00.000]\r\r\n\UUT_SWT&gt; '], 0, '1', 1))
     # return proto_items,model_items
     st = SelectObject()
-    proto_items = st.selected_object('5','001_normalTest')
-    model_items = st.selected_object('5','032_checkTest_testLSWTableTest_Fail')
+    proto_items = st.selected_object('1','001_normalTest')
+    model_items = st.selected_object('1','002_checkTest_BiosCheck_Fail')
     return proto_items,model_items
 
 

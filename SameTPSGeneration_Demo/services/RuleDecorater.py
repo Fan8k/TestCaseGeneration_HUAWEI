@@ -16,6 +16,7 @@ class RuleDecorater:
     @classmethod
     def rule_word_decorater(cls,word_patern,rules):
         '''
+        过时方法
         把已有规则的前部分context的最后部分所包含的word进行模式匹配先找到，先后把word词之后进行rule拼接改造
         :param word:
         :param rules:
@@ -37,6 +38,10 @@ class RuleDecorater:
                     before_context = before_context[0:result.span()[1]]
                     rule.context = (before_context,rule.context[1])
         return rules
+
+    @classmethod
+    def orinial_rule_decorater(cls):
+        pass
 
 if __name__ =="__main__":
     before_context ="\\r\\nOK\\r\\r\\n\\r\\r\\n  \\(1)\\UUT_SWT(1)\\Qbarcode(1).........................Pass [00:00:00.000]\\r\\r\\n  qbarcode............................................Pass [barcode:023DUA0147258"

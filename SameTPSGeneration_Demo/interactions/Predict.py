@@ -7,7 +7,7 @@ from services.ExtractRuler import ExtractRuler
 from utils.ExtractLocationInfo import ExtractLocationInfo
 from services.RuleDecorater import RuleDecorater
 from services.RuleMerger import RuleMerger
-
+from daos.GetXML import GetXML
 '''
 输入原型组数据预测生成相应的模型组数据
 '''
@@ -60,3 +60,9 @@ if __name__ == "__main__":
             print(item)
         print("\n\n")
     print(count)
+
+    print("\n\n")
+    get_xml = GetXML()
+    items = get_xml.read_file(path)
+    for item in items:
+        print(item)

@@ -9,6 +9,7 @@ from utils.MD5 import MD5
 from models.Rule import Rule
 from services.ContextSolver import ContextSolver
 from services.RulesSolver import RulesSolver
+from preprocess.StrProcess import StrProcess
 
 '''
 从items中提取规则
@@ -21,9 +22,10 @@ class ExtractRuler:
     differ = difflib.Differ()
     cs = ContextSolver()
     rs = RulesSolver()
-
+    sp = StrProcess()
     def __init__(self):
         self.location = '-1'
+        self.type = '-1'
 
     def _get_items(self,location,type):
         '''
@@ -32,6 +34,7 @@ class ExtractRuler:
         :return: 从数据库中获取到的item对象
         '''
         self.location = location
+        self.type = type
         return ExtractRuler.st.selected_object(location,type)
 
     def _get_rules(self,proto_items,model_items):
@@ -52,9 +55,9 @@ class ExtractRuler:
                 model_response_str = ExtractRuler.md5.encode(model_item.responses[response_index])
                 if pri_response_str != model_response_str:
                      #找出修改点及其在原来字符串中的位置信息
-                     results = self._find_change_points(pri_item.responses[response_index],model_item.responses[response_index])
+                     results = self._find_change_points(ExtractRuler.sp.str_process(pri_item.responses[response_index],1),ExtractRuler.sp.str_process(model_item.responses[response_index],1))
                      _contexts = ExtractRuler.cs.between_changes_context(results[0],len(results[1]))
-                     rules.extend(ExtractRuler.rs.pack_rules(_contexts,results[1],self.location))
+                     rules.extend(ExtractRuler.rs.pack_rules(_contexts,results[1],self.location,self.type))
         return rules
 
     def _find_change_points(self,pri_response_str,model_response_str):

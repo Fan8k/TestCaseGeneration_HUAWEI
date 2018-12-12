@@ -8,11 +8,11 @@ from utils.ExtractLocationInfo import ExtractLocationInfo
 from services.RuleDecorater import RuleDecorater
 from services.RuleMerger import RuleMerger
 from interactions.Predict import Predict
-
+from daos.GetXML import GetXML
 
 
 if __name__ =="__main__":
-    path = "/home/inspur/li/SameTPSGeneration_Demo/datas/data/1/001_normalTest/com.xml"
+    path = "/home/inspur/li/SameTPSGeneration_Demo/datas/data/1/002_checkTest_BiosCheck_Fail/com.xml"
     # tps下
     tps = ExtractLocationInfo.extract_location_and_type_info(r"/home/inspur/li/SameTPSGeneration_Demo/datas/data")
     # 某一个编码 比如编码1 下面的原型组 001_normalTest
@@ -20,6 +20,8 @@ if __name__ =="__main__":
     primary_rules = []
     for i in location:
     # 选择的目标编码
+        if i =='1':
+            continue
         aim_location = i
         proto_type, model_types = ExtractLocationInfo.filter_proto_type(tps[aim_location], '001_normalTest')
         extractRuler = ExtractRuler()
@@ -49,3 +51,9 @@ if __name__ =="__main__":
             print(item)
         print("\n\n")
     print(count)
+
+    print("\n\n")
+    get_xml = GetXML()
+    items = get_xml.read_file(path)
+    for item in items:
+        print(item)
