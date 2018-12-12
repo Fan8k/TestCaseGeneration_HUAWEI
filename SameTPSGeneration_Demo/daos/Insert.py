@@ -6,7 +6,8 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 print(sys.path)
 from utils.MySqlConnectionFactory import MysqlConnectFactory
-#class fileinfo:
+from preprocess.StrProcess import StrProcess
+
 '''
 author:cll
 '''
@@ -20,6 +21,7 @@ class Insert:
         rootdir, filetypelist=self.filetype()
         #print(filetypelist)
         lenth=len(filetypelist)
+        preprocess=StrProcess()
         Mysql_factory = MysqlConnectFactory()
         conn = Mysql_factory.get_connect()
 
@@ -31,15 +33,9 @@ class Insert:
 
 
         '''
-        sql='select * from tsp_info'
-        cur.execute(sql)
-        result=cur.fetchall()
-        for row in result:
-            print(row)
-        #effectRow = cur.rowcount
-        #print(effectRow)
+        第几个文件夹数据
         '''
-        loca=str(5)#第一个文件夹数据
+        loca=str(5)
         for i in range(0, lenth):
                 xmlpath =rootdir + '/' + filetypelist[i] + '/' + 'uut-com.xml'
                 #print(filetypelist[i])
@@ -59,11 +55,11 @@ class Insert:
 
                     for childText in responseText:  # 利用getchildren方法得到子节点
                         # print(childNode.tag)
-                        response_list.append(self.str_process(childText.text, 0))
+                        response_list.append(preprocess.str_process(childText.text, 1))
 
 
                     for childText in cmdText:
-                        cmd_list.append(self.str_process(childText.text, 0))#0不删除...
+                        cmd_list.append(preprocess.str_process(childText.text, 1))#0不删除...
 
                     tempDict.update({count: {"cmd": cmd_list}})
                     tempDict[count].update({"response": response_list})
@@ -72,6 +68,7 @@ class Insert:
 
                 tempJson = json.dumps(tempDict, ensure_ascii=False)#字典转str
                 value = (loca,filetypelist[i],tempJson)
+                print(tempJson)
 
                 cur.execute('insert into tsp_full_info values(null,%s,%s,%s,0)', value)
 
@@ -82,23 +79,6 @@ class Insert:
         cur.close()
         conn.close()
 
-    def str_process(self, str1, flag):
-        resStr = ''
-        if str1 != None:
-            if str1.find('\n') != -1 or str1.find('..') != -1:
-                if flag == 1:
-                    response_content = str1.replace('\n', '\\n').replace('..', '')
-                    resStr = resStr + response_content
-                else:
-                    response_content = str1.replace('\n', '\\n')
-                    resStr = resStr + response_content
-
-            else:
-                resStr = resStr + str1
-
-        else:
-            resStr = resStr + 'None'
-        return resStr
 
 
     def filetype(self):
@@ -116,8 +96,8 @@ class Insert:
 
 
 def main():
-    print("是否执行此程序")
-    command = input()
+    # print("是否执行此程序")
+    # command = input()
 
     insert = Insert()
     insert.read_file()
