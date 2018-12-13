@@ -2,6 +2,7 @@ import xml.etree.ElementTree as ET
 import sys
 import os
 import uuid
+from GetXML import GetXML
 import os.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -26,9 +27,9 @@ class WriteBack():
             templist=itemlist[count].responses
             for i in range(len(reponse_text)):
 
-                reponse_text[i].text=templist[i]
+                reponse_text[i].text = templist[i]
 
-            tree.write(path1+'\\datas\\data\\new'+uuid_str+os.path.basename(filepath))
+            tree.write(path1+'/datas/data/new'+uuid_str+os.path.basename(filepath))
             count+=1
 
 def main():
@@ -36,12 +37,16 @@ def main():
     # command = input()
     path1 = os.path.abspath('..')
     print(path1)
-    filepath='C:\\Users\\Thinkpad\\PycharmProjects\\TestCaseGeneration_HUAWEI_12_3\\SameTPSGeneration_Demo\\datas\\data\\test\\0new.xml'
+    filepath = path1+'/datas/data/1/001_normalTest/com.xml'
+    #filepath='C:\\Users\\Thinkpad\\PycharmProjects\\TestCaseGeneration_HUAWEI_12_3\\SameTPSGeneration_Demo\\datas\\data\\test\\0new.xml'
     uuid_str = uuid.uuid4().hex
+    a=GetXML()
+
+    itemlist=a.read_file(filepath)
     print(os.path.basename(filepath))
-    print(path1+'\\datas\\data\\new'+uuid_str+os.path.basename(filepath))
-    # writeback= WriteBack()
-    # writeback.newxml()
+    print(path1+'/datas/data/new'+uuid_str+os.path.basename(filepath))
+    writeback= WriteBack()
+    writeback.newxml(itemlist,filepath)
 
 
 
