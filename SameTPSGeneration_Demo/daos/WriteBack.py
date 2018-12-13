@@ -15,6 +15,8 @@ class WriteBack():
         '''
 
         path1 = os.path.abspath('..')
+        path2=path1+'/datas/data/predict_data'
+        self.mkdir(path2)
         # print(path1)
         # print(path1)
         rootdir = filepath
@@ -29,8 +31,18 @@ class WriteBack():
 
                 reponse_text[i].text = templist[i]
 
-            tree.write(path1+'/datas/data/new'+uuid_str+os.path.basename(filepath))
+            tree.write(path2+'/new'+uuid_str+os.path.basename(filepath))
             count += 1
+
+
+def mkdir(path):
+    isExists=os.path.exists(path)
+    if not isExists:
+        #b不存在路径就创建
+        os.makedirs(path)
+
+
+
 
 def main():
     # print("是否执行此程序")
@@ -40,9 +52,9 @@ def main():
     filepath = path1+'/datas/data/1/001_normalTest/com.xml'
     #filepath='C:\\Users\\Thinkpad\\PycharmProjects\\TestCaseGeneration_HUAWEI_12_3\\SameTPSGeneration_Demo\\datas\\data\\test\\0new.xml'
     uuid_str = uuid.uuid4().hex
-    a = GetXML()
-
-    itemlist = a.read_file(filepath)
+    A = GetXML()
+    print(os.path.basename(filepath))
+    itemlist=A.read_file(filepath)
     print(os.path.basename(filepath))
     print(path1+'/datas/data/new'+uuid_str+os.path.basename(filepath))
     writeback= WriteBack()
