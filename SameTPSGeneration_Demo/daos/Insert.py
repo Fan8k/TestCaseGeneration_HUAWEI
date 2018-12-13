@@ -13,7 +13,7 @@ author:cll
 '''
 
 class Insert:
-    def read_file(self):
+    def get_file(self):
         #path1 = os.path.abspath('..')
         #print(path1)
 
@@ -100,7 +100,7 @@ def main():
     # command = input()
 
     insert = Insert()
-    insert.read_file()
+    insert.get_file()
 
 
 
