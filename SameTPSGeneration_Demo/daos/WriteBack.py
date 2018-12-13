@@ -23,8 +23,9 @@ class WriteBack():
         uuid_str = uuid.uuid4().hex
         for item in root.findall('item'):
             reponse_text=item.findall('response')
-            templist=itemlist[count].reponses
+            templist=itemlist[count].responses
             for i in range(len(reponse_text)):
+
                 reponse_text[i].text=templist[i]
 
             tree.write(path1+'datas\\data\\new'+uuid_str+os.path.basename(filepath))
