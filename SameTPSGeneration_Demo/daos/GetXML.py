@@ -64,7 +64,7 @@ class GetXML:
 def main():
     path1 = os.path.abspath('..')
 
-    rootdir = path1 + '/datas/data' + '/2'+'/001_normalTest/com.xml'
+    rootdir = path1 + '/datas/data' + '/1'+'/001_normalTest/com.xml'
 
 
     get_xml = GetXML()
