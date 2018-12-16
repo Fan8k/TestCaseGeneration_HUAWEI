@@ -43,7 +43,7 @@ class DataMatcher(object):
         :param original: ^ $ * + ? {} [] | () \ .  包含元字符
         :return: 把元字符前加上转义符号\，变成非转义字符\
         '''
-        meta_words = ['\\',']','{','}','^','$','*','+','?','(',')','.','[']
+        meta_words = ['[']
         for meta_word in meta_words:
             original = original.replace(meta_word,'\%s'%meta_word)
         return original
@@ -95,7 +95,11 @@ class DataMatcher(object):
                                 if _commonRule.context[0] == _response[start_index - b_context_len:start_index] and \
                                         _commonRule.context[1] == _response[stop_index:stop_index + a_context_len]:
                                     #不能立马就改，因为后来的修改也是按照之前的模式匹配找到的位置，一改位置就乱了，只能先记住那些点要改
-                                    _change_point_location.append((start_index, stop_index,_commonRule.random_choice_to()))
+                                    #这个地方增加一个修复，就是修改的位置不能喝random_choice_to一致
+                                    _change_to_value = _commonRule.random_choice_to()
+                                    if _change_to_value == _response[start_index:stop_index]:
+                                        _change_to_value = _commonRule.random_choice_to(repeat=True)
+                                    _change_point_location.append((start_index, stop_index,_change_to_value))
                                     if response_changed_flag ==False:
                                         response_changed_flag = True
                                         item_changed_flag = True
@@ -122,13 +126,13 @@ class DataMatcher(object):
         '''
         # 开始每个item的每个response进行匹配任务
         for index, item in enumerate(proto_items):
+
             # 默认没有修改过
             item_changed_flag = False
             # 先深度拷贝一份
             temp = copy.deepcopy(item)
             for response_index, _response in enumerate(temp.responses):
                 # 应用规则 先找有无修改点，然后匹配上下文，最后随机选择一个to
-
                 if _response == 'None':
                     continue
                 _commonRule_point = {}

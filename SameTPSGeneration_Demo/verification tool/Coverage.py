@@ -9,7 +9,7 @@ from services.RuleDecorater import RuleDecorater
 from services.RuleMerger import RuleMerger
 from interactions.Predict import Predict
 from daos.GetXML import GetXML
-
+from daos.WriteBack import WriteBack
 
 if __name__ =="__main__":
     path = "/home/inspur/li/SameTPSGeneration_Demo/datas/data/1/002_checkTest_BiosCheck_Fail/com.xml"
@@ -21,7 +21,7 @@ if __name__ =="__main__":
     for i in location:
     # 选择的目标编码
         if i =='1':
-            continue
+             continue
         aim_location = i
         proto_type, model_types = ExtractLocationInfo.filter_proto_type(tps[aim_location], '001_normalTest')
         extractRuler = ExtractRuler()
@@ -30,7 +30,8 @@ if __name__ =="__main__":
         primary_rules.extend(encode_rules)
         # 原始规则进行装饰和合并
         # 这里只是进行barcode 单词装饰
-    rules = RuleDecorater.rule_word_decorater(r"\[barcode:", primary_rules)
+    #rules = RuleDecorater.rule_word_decorater(r"\[barcode:", primary_rules)
+    rules = RuleDecorater.orinial_rule_decorater([(':', "["), ('\[', 'P')], primary_rules)
     # 装饰之后需要进行按照上下文和from进行合并 提成更普通的规则
     common_rules = RuleMerger.mergeredBy_contextOrigin(rules)
     # print("规则")
@@ -44,16 +45,21 @@ if __name__ =="__main__":
     print("预测\n\n")
 
     predicter = Predict()
-    count = 0
-    for items in predicter.predict(path, common_rules):
-        count += 1
-        for item in items:
-            print(item)
-        print("\n\n")
-    print(count)
 
-    print("\n\n")
-    get_xml = GetXML()
-    items = get_xml.read_file(path)
-    for item in items:
-        print(item)
+    wb = WriteBack()
+    for items in predicter.predict(path, common_rules):
+        wb.newxml(items, path)
+
+    # count = 0
+    # for items in predicter.predict(path, common_rules):
+    #     count += 1
+    #     for item in items:
+    #         print(item)
+    #     print("\n\n")
+    # print(count)
+    #
+    # print("\n\n")
+    # get_xml = GetXML()
+    # items = get_xml.read_file(path)
+    # for item in items:
+    #     print(item)

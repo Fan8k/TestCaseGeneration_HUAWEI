@@ -2,6 +2,7 @@
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+print(sys.path)
 from services.DataMatcher import DataMatcher
 from services.ExtractRuler import ExtractRuler
 from utils.ExtractLocationInfo import ExtractLocationInfo
@@ -44,7 +45,8 @@ if __name__ == "__main__":
     encode_rules = extractRuler.get_encode_rules(aim_location,proto_type,model_types)
     #原始规则进行装饰和合并
     #这里只是进行barcode 单词装饰
-    rules = RuleDecorater.rule_word_decorater(r"\[barcode:", encode_rules)
+    #rules = RuleDecorater.rule_word_decorater(r"\[barcode:", encode_rules)
+    rules = RuleDecorater.orinial_rule_decorater([(':', "["), ('\[', 'P')], encode_rules)
     #装饰之后需要进行按照上下文和from进行合并 提成更普通的规则
     common_rules = RuleMerger.mergeredBy_contextOrigin(rules)
 
@@ -57,17 +59,16 @@ if __name__ == "__main__":
 
     predicter = Predict()
     wb = WriteBack()
-    parent_path = "/home/inspur/li/SameTPSGeneration_Demo/datas/Prections/"
     for items in predicter.predict(path, common_rules):
-        wb.newxml(items,parent_path+str(time.time())+".xml")
-    # count = 0
+         wb.newxml(items,path)
+     #count = 0
     # for items in predicter.predict(path,common_rules):
     #     count+=1
     #     for item in items:
     #         print(item)
     #     print("\n\n")
     # print(count)
-
+    #
     # print("\n\n")
     # get_xml = GetXML()
     # items = get_xml.read_file(path)

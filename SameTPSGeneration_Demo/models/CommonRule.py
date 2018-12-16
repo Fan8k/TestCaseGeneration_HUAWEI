@@ -22,8 +22,7 @@ class CommonRule(object):
         self._context = context
         self._original = original
         self._to = to
-
-
+        self._random_choiced = []
     @property
     def context(self):
         return self._context
@@ -48,28 +47,34 @@ class CommonRule(object):
     def to(self, to):
         self._to = to
 
-    def random_choice_to(self):
-        num_list=[]
-        last = 0
-        current = 0
-        for value in self._to.values():
-            current+=value
-            num_list.append([last,current])
-            last = value
-        #权重空间
-        num_list = np.array(num_list)/current
-        num_list = num_list.tolist()
-        random_value = random.uniform(0,1)
-        high = len(num_list)
-        low = 0
-        while(True):
-            middle = (low+high)//2
-            if num_list[middle][0]<= random_value and num_list[middle][1] > random_value:
-                break
-            elif random_value < num_list[middle][0]:
-                high = middle
-            elif random_value > num_list[middle][1]:
-                low = middle
+    def random_choice_to(self,repeat=False):
+        if repeat==False:
+            num_list=[]
+            last = 0
+            current = 0
+            for value in self._to.values():
+                current+=value
+                num_list.append([last,current])
+                last = value
+            #权重空间
+            num_list = np.array(num_list)/current
+            num_list = num_list.tolist()
+            random_value = random.uniform(0,1)
+            high = len(num_list)
+            low = 0
+            while(True):
+                middle = (low+high)//2
+                if num_list[middle][0]<= random_value and num_list[middle][1] > random_value:
+                    break
+                elif random_value < num_list[middle][0]:
+                    high = middle
+                elif random_value > num_list[middle][1]:
+                    low = middle
+            self._random_choiced.append(middle)
+        else:
+            last_index = self._random_choiced[0]
+            middle = last_index + 1 if last_index!=(len(self._to.keys())-2) else last_index-1
+            self._random_choiced = []
         return list(self._to.keys())[middle]
 
     def __str__(self):

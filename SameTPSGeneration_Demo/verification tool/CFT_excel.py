@@ -43,18 +43,39 @@ if __name__ == "__main__":
             ws.write(index, 3, rule.to)
             ws.write(index, 4, rule.location)
             ws.write(index,5,rule.file_name)
-    ws = wb.add_sheet('all_code')
-    bias = 0
-    for i in location:
-        aim_location = i
-        proto_type, model_types=ExtractLocationInfo.filter_proto_type(tps[aim_location],'001_normalTest')
-        extractRuler = ExtractRuler()
-        #整个编码下所有的规则
-        encode_rules = extractRuler.get_encode_rules(aim_location,proto_type,model_types)
-        for index,rule in enumerate(encode_rules):
-            ws.write(bias,0,rule.context[0])
-            ws.write(bias, 1, rule.context[1])
-            ws.write(bias, 2, rule.original)
-            ws.write(bias, 3, rule.to)
-            bias+=1
     wb.save("all_primary_rules.xls")
+    wb = xlwt.Workbook()
+    # bias = 0
+    # for i in location:
+    #     aim_location = i
+    #     proto_type, model_types=ExtractLocationInfo.filter_proto_type(tps[aim_location],'001_normalTest')
+    #     extractRuler = ExtractRuler()
+    #     #整个编码下所有的规则
+    #     encode_rules = extractRuler.get_encode_rules(aim_location,proto_type,model_types)
+    #     for index,rule in enumerate(encode_rules):
+    #         ws.write(bias,0,rule.context[0])
+    #         ws.write(bias, 1, rule.context[1])
+    #         ws.write(bias, 2, rule.original)
+    #         ws.write(bias, 3, rule.to)
+    #         bias+=1
+
+    '''
+    生成抽取的新的规则
+    '''
+    for i in location:
+        ws = wb.add_sheet('%s_code' % (i))
+        aim_location = i
+        proto_type, model_types = ExtractLocationInfo.filter_proto_type(tps[aim_location], '001_normalTest')
+        extractRuler = ExtractRuler()
+        # 整个编码下所有的规则
+        rules = extractRuler.get_encode_rules(aim_location, proto_type, model_types)
+        rules = RuleDecorater.orinial_rule_decorater([(':', "["),('\[','P')], rules)
+        rules = RuleMerger.mergeredBy_contextOrigin(rules)
+        for index, rule in enumerate(rules):
+            ws.write(index, 0, rule.context[0])
+            ws.write(index, 1, rule.context[1])
+            ws.write(index, 2, rule.original)
+            ws.write(index, 3, str(rule.to))
+            #ws.write(index, 4, rule.location)
+            #ws.write(index, 5, rule.file_name)
+    wb.save("all_common_rules.xls")

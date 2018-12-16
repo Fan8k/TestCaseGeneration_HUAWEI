@@ -27,8 +27,8 @@ def create_item():
     # model_items.append(Item([r'test qbarcode\r'], [r'\r\nOK\r\r\n\r\r\n  \(1)\UUT_SWT(1)\Qbarcode(1)Pass [00:00:00.000]\r\r\n  qbarcodePass [barcode:023DUA0147258963]\r\r\n  \(1)\UUT_SWT(1)\Qbarcode(*)Pass [00:00:00.000]\r\r\n\UUT_SWT&gt; '], 0, '1', 1))
     # return proto_items,model_items
     st = SelectObject()
-    proto_items = st.selected_object('1','001_normalTest')
-    model_items = st.selected_object('1','002_checkTest_BiosCheck_Fail')
+    proto_items = st.selected_object('4','001_normalTest')
+    model_items = st.selected_object('4','001_checkTest_testversion_Fail')
     return proto_items,model_items
 
 
@@ -52,7 +52,8 @@ if __name__ == "__main__":
     print("\n\n")
     # 原始规则进行装饰和合并
     # 这里只是进行barcode 单词装饰
-    rules = RuleDecorater.rule_word_decorater(r"\[barcode:", encode_rules)
+    #rules = RuleDecorater.rule_word_decorater(r"\[barcode:", encode_rules)
+    rules = RuleDecorater.orinial_rule_decorater([(':', "["), ('\[', 'P')], encode_rules)
     # 装饰之后需要进行按照上下文和from进行合并 提成更普通的规则
     common_rules = RuleMerger.mergeredBy_contextOrigin(rules)
     print("通用规则")
