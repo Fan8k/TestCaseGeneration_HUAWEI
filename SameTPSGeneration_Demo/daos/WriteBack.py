@@ -5,9 +5,10 @@ import uuid
 
 import os.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from daos.GetXML import GetXML
-
+from GetXML import GetXML
+#from daos.GetXML import GetXML
 class WriteBack():
+
     def newxml(self,itemlist=[],filepath=None):
         '''
         itemlist[]：传入itemlist集合
@@ -35,11 +36,11 @@ class WriteBack():
             count += 1
 
 
-def mkdir(path):
-    isExists=os.path.exists(path)
-    if not isExists:
-        #b不存在路径就创建
-        os.makedirs(path)
+    def mkdir(self,path1):
+        isExists=os.path.exists(path1)
+        if not isExists:
+            #b不存在路径就创建
+            os.makedirs(path1)
 
 
 
@@ -52,11 +53,14 @@ def main():
     filepath = path1+'/datas/data/1/001_normalTest/com.xml'
     #filepath='C:\\Users\\Thinkpad\\PycharmProjects\\TestCaseGeneration_HUAWEI_12_3\\SameTPSGeneration_Demo\\datas\\data\\test\\0new.xml'
     uuid_str = uuid.uuid4().hex
-    A = GetXML()
-    print(os.path.basename(filepath))
-    itemlist=A.read_file(filepath)
-    print(os.path.basename(filepath))
-    print(path1+'/datas/data/new'+uuid_str+os.path.basename(filepath))
+    #getxml = GetXML()
+    # print(os.path.basename(filepath))
+    # itemlist=getxml.read_file(filepath)
+    # print(os.path.basename(filepath))
+    # print(path1+'/datas/data/new'+uuid_str+os.path.basename(filepath))
+    get_xml =GetXML()
+    itemlist = get_xml.read_file(filepath)
+    #itemlist = GetXML.read_file(filepath)
     writeback= WriteBack()
     writeback.newxml(itemlist, filepath)
 

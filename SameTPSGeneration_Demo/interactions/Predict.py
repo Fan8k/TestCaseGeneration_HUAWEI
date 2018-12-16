@@ -43,6 +43,7 @@ if __name__ == "__main__":
     extractRuler = ExtractRuler()
     #整个编码下所有的规则
     encode_rules = extractRuler.get_encode_rules(aim_location,proto_type,model_types)
+    print(type(encode_rules))
     #原始规则进行装饰和合并
     #这里只是进行barcode 单词装饰
     #rules = RuleDecorater.rule_word_decorater(r"\[barcode:", encode_rules)

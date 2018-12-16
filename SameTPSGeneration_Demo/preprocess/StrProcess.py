@@ -10,12 +10,12 @@ class StrProcess:
             if str1.find('\n') != -1 or str1.find('..') != -1:
                 if flag == 1:#去'..'
                     response_content = str1.replace('\n', '\\n')
-                    p = re.compile(r"\D(\.+)\D")
+                    p = re.compile(r"[|\D](\.+)\D")
                     for com in p.finditer(response_content):
                         mm = com.group()
                         #         print ("hi:", mm)
                         #         print ("sen_before:", sen)
-                        response_content = response_content.replace(mm, mm.replace(".", ""))
+                        response_content = response_content.replace(mm, mm.replace(".", ""), 1)
                     #         print ("sen_back:", sen, '\n')
                     #print(response_content)
                     #response_content = p.sub("", response_content)

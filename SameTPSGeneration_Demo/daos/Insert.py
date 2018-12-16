@@ -18,7 +18,7 @@ class Insert:
         #print(path1)
 
         filetypelist=[]
-        rootdir, filetypelist=self.filetype()
+        rootdir, filetypelist=self.file_type()
         #print(filetypelist)
         lenth=len(filetypelist)
         preprocess=StrProcess()
@@ -70,18 +70,18 @@ class Insert:
                 value = (loca,filetypelist[i],tempJson)
                 print(tempJson)
 
-                #cur.execute('insert into tsp_full_info values(null,%s,%s,%s,0)', value)
-
-                #conn.commit()
-
-               # conn.rollback()
+                # cur.execute('insert into tsp_full_info values(null,%s,%s,%s,0)', value)
+                #
+                # conn.commit()
+                #
+                # conn.rollback()
 
         cur.close()
         conn.close()
 
 
 
-    def filetype(self):
+    def file_type(self):
         path1 = os.path.abspath('..')
         #print(path1)
         rootdir = path1 + '/datas/data'+'/5'
