@@ -29,8 +29,10 @@ class WriteBack():
             reponse_text=item.findall('response')
             templist=itemlist[count].responses
             for i in range(len(reponse_text)):
-
-                reponse_text[i].text = templist[i]
+                if   templist[i]=='None':
+                    reponse_text[i].text = ''
+                else:
+                    reponse_text[i].text=templist[i]
 
             tree.write(path2+'/new'+uuid_str+os.path.basename(filepath))
             count += 1

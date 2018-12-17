@@ -8,14 +8,19 @@ class StrProcess:
         resStr = ''
         if str1 != None:
             if str1.find('\n') != -1 or str1.find('..') != -1:
-                if flag == 1:#去'..'
+                if flag == 1:
+                    '''
+                    去'..'只保留一个点
+                    '''
                     response_content = str1.replace('\n', '\\n')
                     p = re.compile(r"[|\D](\.+)\D")
                     for com in p.finditer(response_content):
                         mm = com.group()
-                        #         print ("hi:", mm)
-                        #         print ("sen_before:", sen)
-                        response_content = response_content.replace(mm, mm.replace(".", ""), 1)
+                        if mm[0] == '.':
+                            response_content = response_content.replace(mm, mm.replace(".", "", len(mm) - 2), 1)
+                        else:
+                            response_content = response_content.replace(mm, mm.replace(".", "", len(mm) - 3), 1)
+
                     #         print ("sen_back:", sen, '\n')
                     #print(response_content)
                     #response_content = p.sub("", response_content)

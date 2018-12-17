@@ -9,6 +9,7 @@ from preprocess.StrProcess import StrProcess
 
 '''
 cll:对于新的xml文件进行item提取
+flag:("是否保留'.'(0全部保留，1只保留保一个.")
 '''
 class GetXML:
 
@@ -26,6 +27,8 @@ class GetXML:
             #print(root.tag)
 
             count = 0
+            print("是否保留'.'(0全部保留，1只保留保一个.")
+            flag = input()
             for item in root.findall('item'):
                 cmd_list = []
                 response_list = []
@@ -34,15 +37,16 @@ class GetXML:
                 lenth = len(response_text)
                 for i in range(lenth):
                     # print(tmp.text)
-                    response_list.append(preprocess.str_process(response_text[i].text, 0))
+                    response_list.append(preprocess.str_process(response_text[i].text, flag))
                     '''
                       0不删除...
                       1表示去除....
-                     '''
+                   '''
+
 
                 cmd_text = item.findall('cmd')
                 for childText in cmd_text:
-                    cmd_list.append(preprocess.str_process(childText.text, 0))
+                    cmd_list.append(preprocess.str_process(childText.text, flag))
                     '''
                     0不删除...
                     1表示去除....
@@ -64,13 +68,21 @@ class GetXML:
 def main():
     path1 = os.path.abspath('..')
 
-    rootdir = path1 + '/datas/data' + '/1'+'/001_normalTest/com.xml'
+    rootdir = path1 + '/datas/data' + '/5'+'/001_normalTest/uut-com.xml'
 
 
     get_xml = GetXML()
     items = get_xml.read_file(rootdir)
+    print(items)
+    mnum=0
+    nmum=0
     for item in items:
-        print(item)
+        responselist=item.responses
+        for i in range(len(responselist)):
+            mnum+=responselist[i].count("Pass")
+            nmum+=responselist[i].count("PASS")
 
+    print(nmum)
+    print(mnum+nmum)
 if __name__=='__main__':
     main()

@@ -18,7 +18,7 @@ class Insert:
         #print(path1)
 
         filetypelist=[]
-        rootdir, filetypelist=self.file_type()
+        rootdir, filetypelist,filelocation=self.file_type()
         #print(filetypelist)
         lenth=len(filetypelist)
         preprocess=StrProcess()
@@ -35,7 +35,7 @@ class Insert:
         '''
         第几个文件夹数据
         '''
-        loca=str(5)
+        #loca=str(2)
         for i in range(0, lenth):
                 xmlpath =rootdir + '/' + filetypelist[i] + '/' + 'uut-com.xml'
                 #print(filetypelist[i])
@@ -59,7 +59,7 @@ class Insert:
 
 
                     for childText in cmdText:
-                        cmd_list.append(preprocess.str_process(childText.text, 1))#0不删除...
+                        cmd_list.append(preprocess.str_process(childText.text, 1))#0不删除...,1表示保留一个.
 
                     tempDict.update({count: {"cmd": cmd_list}})
                     tempDict[count].update({"response": response_list})
@@ -67,14 +67,15 @@ class Insert:
                     count += 1
 
                 tempJson = json.dumps(tempDict, ensure_ascii=False)#字典转str
-                value = (loca,filetypelist[i],tempJson)
+                value = (filelocation,filetypelist[i],tempJson)
                 print(tempJson)
 
-                # cur.execute('insert into tsp_full_info values(null,%s,%s,%s,0)', value)
-                #
-                # conn.commit()
-                #
-                # conn.rollback()
+
+                cur.execute('insert into tsp_full_info values(null,%s,%s,%s,0)', value)
+
+                conn.commit()
+
+                conn.rollback()
 
         cur.close()
         conn.close()
@@ -84,14 +85,15 @@ class Insert:
     def file_type(self):
         path1 = os.path.abspath('..')
         #print(path1)
-        rootdir = path1 + '/datas/data'+'/5'
+        fileloaction=input()
+        rootdir = path1 + '/datas/data/'+fileloaction
         #print(rootdir)
         namelist = []
 
         for dirs in os.listdir(rootdir):
             namelist.append(dirs)
 
-        return rootdir, namelist
+        return rootdir, namelist,fileloaction
 
 
 
