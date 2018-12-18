@@ -37,13 +37,14 @@ class Insert:
         '''
         #loca=str(2)
         for i in range(0, lenth):
-                xmlpath =rootdir + '/' + filetypelist[i] + '/' + 'uut-com.xml'
+                xmlpath =rootdir + '/' + filetypelist[i] + '/' + 'uut_com.xml'
                 #print(filetypelist[i])
 
                 tree = ET.parse(xmlpath)
                 root = tree.getroot()
 
                 count = 0
+                num=0
                 tempDict = {}
 
                 for item in root.findall('item'):
@@ -52,10 +53,15 @@ class Insert:
                     # tempDict['id']=str(count)
                     responseText = item.findall('response')
                     cmdText = item.findall('cmd')
+                    if num == 13:
 
-                    for childText in responseText:  # 利用getchildren方法得到子节点
-                        # print(childNode.tag)
-                        response_list.append(preprocess.str_process(childText.text, 1))
+                        for childText in responseText:  # 利用getchildren方法得到子节点
+                            # print(childNode.tag)
+                            print(i)
+                            print(childText.text)
+                            response_list.append(preprocess.str_process(childText.text, 1))
+                            print("=======after")
+                            print(preprocess.str_process(childText.text, 1))
 
 
                     for childText in cmdText:
@@ -65,17 +71,18 @@ class Insert:
                     tempDict[count].update({"response": response_list})
                     #print(tempDict[count])
                     count += 1
+                    num+=1
 
                 tempJson = json.dumps(tempDict, ensure_ascii=False)#字典转str
                 value = (filelocation,filetypelist[i],tempJson)
-                print(tempJson)
+                #print(tempJson)
 
 
-                cur.execute('insert into tsp_full_info values(null,%s,%s,%s,0)', value)
+                #cur.execute('insert into tsp_full_info values(null,%s,%s,%s,0)', value)
 
-                conn.commit()
+                #conn.commit()
 
-                conn.rollback()
+                #conn.rollback()
 
         cur.close()
         conn.close()

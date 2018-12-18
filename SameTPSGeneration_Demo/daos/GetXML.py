@@ -25,7 +25,9 @@ class GetXML:
             tree = ET.parse(filepath)
             root = tree.getroot()
             #print(root.tag)
-
+            tmppath = os.path.basename(os.path.dirname(os.path.dirname(filepath)))
+            location=tmppath + os.path.basename(os.path.dirname(filepath))
+            #print(location)
             count = 0
             print("是否保留'.'(0全部保留，1只保留保一个.")
             flag = input()
@@ -51,7 +53,7 @@ class GetXML:
                     0不删除...
                     1表示去除....
                     '''
-                S_info = Item.Item(cmds=cmd_list, responses=response_list, score=0, location_info=None, num=count)
+                S_info = Item.Item(cmds=cmd_list, responses=response_list, score=0, location_info=location, num=count)
 
                 item_list.append(S_info)
 

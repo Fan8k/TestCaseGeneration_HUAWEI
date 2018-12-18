@@ -7,22 +7,29 @@ import os.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from GetXML import GetXML
 #from daos.GetXML import GetXML
+'''
+flag表示是否为原型组
+'''
 class WriteBack():
 
-    def newxml(self,itemlist=[],filepath=None):
+    def newxml(self,itemlist=[],filepath=None,flag=0):
         '''
         itemlist[]：传入itemlist集合
         filepath：传入的原型xml的完整路径
         '''
 
         path1 = os.path.abspath('..')
-        path2=path1+'/datas/data/predict_data'
+        path2 = path1+'/datas/data/predict_data/'+itemlist[0].location_info
+
         self.mkdir(path2)
         # print(path1)
-        # print(path1)
+        print(path2)
         rootdir = filepath
         tree = ET.parse(filepath)
         root = tree.getroot()
+        if os.path.exists(path2+'/newnormalcom.xml') is not True:
+            tree.write(path2+'/newnormalcom.xml')
+
         count = 0
         uuid_str = uuid.uuid4().hex
         for item in root.findall('item'):
@@ -41,7 +48,7 @@ class WriteBack():
     def mkdir(self,path1):
         isExists=os.path.exists(path1)
         if not isExists:
-            #b不存在路径就创建
+            #不存在路径就创建
             os.makedirs(path1)
 
 
@@ -59,7 +66,8 @@ def main():
     # print(os.path.basename(filepath))
     # itemlist=getxml.read_file(filepath)
     # print(os.path.basename(filepath))
-    # print(path1+'/datas/data/new'+uuid_str+os.path.basename(filepath))
+    # tmppath=os.path.basename(os.path.dirname(os.path.dirname(filepath)))
+    # print(path1+'/datas/data/new'+tmppath+os.path.basename(os.path.dirname(filepath)))
     get_xml =GetXML()
     itemlist = get_xml.read_file(filepath)
     #itemlist = GetXML.read_file(filepath)

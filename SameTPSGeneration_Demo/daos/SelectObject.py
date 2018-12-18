@@ -53,7 +53,9 @@ def main():
     filetype = "001_normalTest"
     itemlist = SelectObject()
     item = itemlist.selected_object(location, filetype)
-    print(item)
+    for itemlist1 in item:
+        print(itemlist1.responses)
+
 
 
 if __name__=='__main__':
