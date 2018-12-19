@@ -27,8 +27,8 @@ def create_item():
     # model_items.append(Item([r'test qbarcode\r'], [r'\r\nOK\r\r\n\r\r\n  \(1)\UUT_SWT(1)\Qbarcode(1)Pass [00:00:00.000]\r\r\n  qbarcodePass [barcode:023DUA0147258963]\r\r\n  \(1)\UUT_SWT(1)\Qbarcode(*)Pass [00:00:00.000]\r\r\n\UUT_SWT&gt; '], 0, '1', 1))
     # return proto_items,model_items
     st = SelectObject()
-    proto_items = st.selected_object('4','001_normalTest')
-    model_items = st.selected_object('4','001_checkTest_testversion_Fail')
+    proto_items = st.selected_object('5','001_normalTest')
+    model_items = st.selected_object('5','031_checkTest_testservice_Fail')
     return proto_items,model_items
 
 

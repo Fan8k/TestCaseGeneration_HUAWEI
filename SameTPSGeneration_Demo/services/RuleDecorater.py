@@ -124,9 +124,14 @@ class RuleDecorater:
             #修改rule的original和to
             rule.original = temp_str[::-1]+rule.original
             #对于from 为[210 是因为前面的pass做了修改 所以它的context为[ 但是为了避免到处改特此加上pass
-            if re.match(r"\d*\[$",temp_str.strip()):
-                rule.original = "Pass"+rule.original
             rule.to = temp_str[::-1]+rule.to
+            if re.match(r"\d*\[$", temp_str.strip()):
+                rule.original = "Pass" + rule.original
+                rule.to = "Pass"+rule.to
+            #去除点开头的规则
+            if rule.original[0] == '.':
+                rule.original = rule.original[1:]
+                rule.to = rule.to[1:]
             rule.context = ("","")
             yield rule
 

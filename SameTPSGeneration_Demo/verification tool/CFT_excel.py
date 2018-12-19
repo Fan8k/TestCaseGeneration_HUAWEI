@@ -69,7 +69,7 @@ if __name__ == "__main__":
         extractRuler = ExtractRuler()
         # 整个编码下所有的规则
         rules = extractRuler.get_encode_rules(aim_location, proto_type, model_types)
-        rules = RuleDecorater.orinial_rule_decorater([(':', "["),('\[','P')], rules)
+        rules = RuleDecorater.orinial_rule_decorater([(':', "["),('\[','.')], rules)
         rules = RuleMerger.mergeredBy_contextOrigin(rules)
         for index, rule in enumerate(rules):
             ws.write(index, 0, rule.context[0])
