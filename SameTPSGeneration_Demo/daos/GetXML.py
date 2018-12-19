@@ -29,8 +29,8 @@ class GetXML:
             location=tmppath + os.path.basename(os.path.dirname(filepath))
             #print(location)
             count = 0
-            print("是否保留'.'(0全部保留，1只保留保一个.")
-            flag = input()
+            
+            
             for item in root.findall('item'):
                 cmd_list = []
                 response_list = []
@@ -39,7 +39,7 @@ class GetXML:
                 lenth = len(response_text)
                 for i in range(lenth):
                     # print(tmp.text)
-                    response_list.append(preprocess.str_process(response_text[i].text, flag))
+                    response_list.append(preprocess.str_process(response_text[i].text, 0))
                     '''
                       0不删除...
                       1表示去除....
@@ -48,7 +48,7 @@ class GetXML:
 
                 cmd_text = item.findall('cmd')
                 for childText in cmd_text:
-                    cmd_list.append(preprocess.str_process(childText.text, flag))
+                    cmd_list.append(preprocess.str_process(childText.text, 0))
                     '''
                     0不删除...
                     1表示去除....

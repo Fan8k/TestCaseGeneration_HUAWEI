@@ -8,27 +8,39 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 #from GetXML import GetXML
 from daos.GetXML import GetXML
 '''
-flag表示是否为原型组
+
 '''
 class WriteBack():
 
-    def newxml(self,itemlist=[],filepath=None,flag=0):
+    def newxml(self,itemlist=[],filepath=None):
         '''
         itemlist[]：传入itemlist集合
         filepath：传入的原型xml的完整路径
         '''
 
         path1 = os.path.abspath('..')
-        path2 = path1+'/datas/data/predict_data/'+itemlist[0].location_info
+        path2 = path1+'/output/'+itemlist[0].location_info
 
         self.mkdir(path2)
         # print(path1)
-        print(path2)
+
         rootdir = filepath
         tree = ET.parse(filepath)
         root = tree.getroot()
         if os.path.exists(path2+'/newnormalcom.xml') is not True:
-            tree.write(path2+'/newnormalcom.xml')
+            get_xml = GetXML()
+            normalcount = 0
+            normal_itemlist = get_xml.read_file(filepath)
+            for item in root.findall('item'):
+                reponse_text = item.findall('response')
+                templist = normal_itemlist[normalcount].responses
+                for i in range(len(reponse_text)):
+                    if templist[i] == 'None':
+                        reponse_text[i].text = ''
+                    else:
+                        reponse_text[i].text = templist[i]
+                tree.write(path2+'/newnormalcom.xml')
+                normalcount += 1
 
         count = 0
         uuid_str = uuid.uuid4().hex
