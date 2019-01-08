@@ -9,10 +9,10 @@ import random
 从Rule中提取的更普通的规则context,from都一致to按照频率汇集
 '''
 
-@Tper.AddTypeCheckerDecorator(_context=tuple,_original=str,_to=dict)
+@Tper.AddTypeCheckerDecorator(_context=tuple,_original=str,_to=dict,_score=int,_frequence=int)
 class CommonRule(object):
 
-    def __init__(self,context=None,original=None,to=None):
+    def __init__(self,context=None,original=None,to=None,score=0,frequence=0):
         '''
         :param contexts: 一个规则的上下文 <前文，后文>
         :param original: 原始的字符
@@ -23,6 +23,9 @@ class CommonRule(object):
         self._original = original
         self._to = to
         self._random_choiced = []
+        self._score = score
+        self._frequence = frequence
+
     @property
     def context(self):
         return self._context
@@ -47,6 +50,22 @@ class CommonRule(object):
     def to(self, to):
         self._to = to
 
+    @property
+    def score(self):
+        return self._score
+
+    @score.setter
+    def score(self, score):
+        self._score = score
+
+    @property
+    def frequence(self):
+        return self._frequence
+
+    @frequence.setter
+    def frequence(self, frequence):
+        self._frequence = frequence
+
     def random_choice_to(self,repeat=False):
         if repeat==False:
             num_list=[]
@@ -55,7 +74,7 @@ class CommonRule(object):
             for value in self._to.values():
                 current+=value
                 num_list.append([last,current])
-                last = value
+                last = current
             #权重空间
             num_list = np.array(num_list)/current
             num_list = num_list.tolist()
@@ -78,5 +97,6 @@ class CommonRule(object):
         return list(self._to.keys())[middle]
 
     def __str__(self):
-        return "rule [context=%s,original=%s,to=%s]" % (
-         self._context, self._original, self._to)
+        return "rule [context=%s,original=%s,to=%s,socre=%s,frequence=%s]" % (
+         self._context, self._original, self._to,self._score,self._frequence)
+

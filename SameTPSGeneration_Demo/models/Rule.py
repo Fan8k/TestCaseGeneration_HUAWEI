@@ -7,10 +7,10 @@ from models import TypeChecker as Tper
 '''
 提取的规则
 '''
-@Tper.AddTypeCheckerDecorator(_context=tuple,_original=str,_to=str,_location=str,_file_name=str)
+@Tper.AddTypeCheckerDecorator(_context=tuple,_original=str,_to=str,_location=str,_file_name=str,_score=int)
 class Rule(object):
 
-    def __init__(self,context=None,original=None,to=None,location=None,file_name=None):
+    def __init__(self,context=None,original=None,to=None,location=None,file_name=None,score=0):
         '''
         :param contexts: 一个规则的上下文 <前文，后文>
         :param original: 原始的字符
@@ -22,7 +22,7 @@ class Rule(object):
         self._to = to
         self._location = location
         self._file_name = file_name
-
+        self._score = score
 
     @property
     def context(self):
@@ -64,7 +64,15 @@ class Rule(object):
     def file_name(self, file_name):
         self._file_name = file_name
 
+    @property
+    def score(self):
+        return self._score
+
+    @score.setter
+    def score(self, score):
+        self._score = score
+
     def __str__(self):
-        return "rule [context=%s,original=%s,to=%s,location=%s]" % (
-         self._context, self._original, self._to,self._location)
+        return "rule [context=%s,original=%s,to=%s,location=%s,score=%s]" % (
+         self._context, self._original, self._to,self._location,self._score)
 
