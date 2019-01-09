@@ -1,8 +1,9 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import xml.etree.ElementTree as ET
 import os
 import errno
 import sys
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from models import Item
 from preprocess.StrProcess import StrProcess
@@ -11,12 +12,13 @@ from preprocess.StrProcess import StrProcess
 cll:对于新的xml文件进行item提取
 flag:("是否保留'.'(0全部保留，1只保留保一个.")
 '''
+
+
 class GetXML:
 
     def read_file(self, filepath):
-        #filepath是待提取的XML的绝对路径
+        # filepath是待提取的XML的绝对路径
         path1 = os.path.abspath('..')
-
 
         item_list = []
         preprocess = StrProcess()
@@ -24,13 +26,12 @@ class GetXML:
 
             tree = ET.parse(filepath)
             root = tree.getroot()
-            #print(root.tag)
+            # print(root.tag)
             tmppath = os.path.basename(os.path.dirname(os.path.dirname(filepath)))
-            location=tmppath + os.path.basename(os.path.dirname(filepath))
-            #print(location)
+            location = tmppath + os.path.basename(os.path.dirname(filepath))
+            # print(location)
             count = 0
-            
-            
+
             for item in root.findall('item'):
                 cmd_list = []
                 response_list = []
@@ -44,7 +45,6 @@ class GetXML:
                       0不删除...
                       1表示去除....
                    '''
-
 
                 cmd_text = item.findall('cmd')
                 for childText in cmd_text:
@@ -64,27 +64,23 @@ class GetXML:
         return item_list
 
 
-
-
-
 def main():
     path1 = os.path.abspath('..')
-
-    rootdir = path1 + '/datas/data' + '/5'+'/001_normalTest/uut-com.xml'
-
-
+    rootdir = path1 + '/datas/data' + '/5' + '/001_normalTest/uut-com.xml'
     get_xml = GetXML()
     items = get_xml.read_file(rootdir)
     print(items)
-    mnum=0
-    nmum=0
+    mnum = 0
+    nmum = 0
     for item in items:
-        responselist=item.responses
+        responselist = item.responses
         for i in range(len(responselist)):
-            mnum+=responselist[i].count("Pass")
-            nmum+=responselist[i].count("PASS")
+            mnum += responselist[i].count("Pass")
+            nmum += responselist[i].count("PASS")
 
     print(nmum)
-    print(mnum+nmum)
-if __name__=='__main__':
+    print(mnum + nmum)
+
+
+if __name__ == '__main__':
     main()
