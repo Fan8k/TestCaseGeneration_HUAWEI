@@ -1,35 +1,43 @@
 import xml.etree.ElementTree as ET
 import sys
 import os
-import uuid
+#import uuid
 
 import os.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-#from GetXML import GetXML
-from daos.GetXML import GetXML
+from GetXML import GetXML
+#from daos.GetXML import GetXML
 '''
 
 '''
+file_count = 0#全局计数器，用来命名
 class WriteBack():
 
-    def newxml(self,itemlist=[],filepath=None):
+    def newxml(self,itemlist=[],filepath=None,item_num=0):
         '''
         itemlist[]：传入itemlist集合
         filepath：传入的原型xml的完整路径
+        item_num: 传入修改的item的位置，第几个item被修改
         '''
-
         path1 = os.path.abspath('..')
-        path2 = path1+'/output/'+itemlist[0].location_info
 
+        global file_count
+        file_count+=1
+        path2 = path1 + '/output/' + itemlist[0].location_info+'/'+str(file_count)
         self.mkdir(path2)
-        # print(path1)
 
-        rootdir = filepath
+
         tree = ET.parse(filepath)
         root = tree.getroot()
+        first_item = root.find('channelinfo')
+        score = ET.Element('score')
+        score.text = '1'
+        first_item.append(score)
+        root.append(first_item)
         if os.path.exists(path2+'/newnormalcom.xml') is not True:
             get_xml = GetXML()
             normalcount = 0
+            #插入新的标签score
             normal_itemlist = get_xml.read_file(filepath)
             for item in root.findall('item'):
                 reponse_text = item.findall('response')
@@ -41,21 +49,26 @@ class WriteBack():
                         reponse_text[i].text = templist[i]
                 tree.write(path2+'/newnormalcom.xml')
                 normalcount += 1
+        #生成模型文件
 
-        count = 0
-        uuid_str = uuid.uuid4().hex
+        num=0
+
         for item in root.findall('item'):
-            reponse_text=item.findall('response')
-            templist=itemlist[count].responses
-            for i in range(len(reponse_text)):
-                if   templist[i]=='None':
-                    reponse_text[i].text = ''
-                else:
-                    reponse_text[i].text=templist[i]
+            num+=1
+            if num==item_num:
+                loop_text = item.find('loop')
+                loop_text.text = '3'
+                reponse_text=item.findall('response')
+                templist=itemlist[num-1].responses
+                for i in range(len(reponse_text)):
+                    if   templist[i]=='None':
+                        reponse_text[i].text = ''
+                    else:
+                        reponse_text[i].text=templist[i]
 
-            tree.write(path2+'/new'+uuid_str+os.path.basename(filepath))
-            count += 1
+                tree.write(path2+'/com.xml')
 
+        return file_count
 
     def mkdir(self,path1):
         isExists=os.path.exists(path1)
@@ -64,29 +77,15 @@ class WriteBack():
             os.makedirs(path1)
 
 
-
-
 def main():
-    # print("是否执行此程序")
-    # command = input()
     path1 = os.path.abspath('..')
     print(path1)
-    filepath = path1+'/datas/data/1/001_normalTest/com.xml'
-    #filepath='C:\\Users\\Thinkpad\\PycharmProjects\\TestCaseGeneration_HUAWEI_12_3\\SameTPSGeneration_Demo\\datas\\data\\test\\0new.xml'
-    uuid_str = uuid.uuid4().hex
-    #getxml = GetXML()
-    # print(os.path.basename(filepath))
-    # itemlist=getxml.read_file(filepath)
-    # print(os.path.basename(filepath))
-    # tmppath=os.path.basename(os.path.dirname(os.path.dirname(filepath)))
-    # print(path1+'/datas/data/new'+tmppath+os.path.basename(os.path.dirname(filepath)))
-    get_xml =GetXML()
+    item_num=3
+    filepath = path1+'/datas/data/2/001_normalTest/uut_com.xml'
+    get_xml = GetXML()
     itemlist = get_xml.read_file(filepath)
-    #itemlist = GetXML.read_file(filepath)
-    writeback= WriteBack()
-    writeback.newxml(itemlist, filepath)
-
-
+    writeback = WriteBack()
+    writeback.newxml(itemlist, filepath, item_num)
 
 
 if __name__=='__main__':

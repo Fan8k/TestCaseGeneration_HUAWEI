@@ -11,7 +11,7 @@ from preprocess.StrProcess import StrProcess
 '''
 author:cll
 '''
-
+s=0
 class Insert:
     def get_file(self):
         #path1 = os.path.abspath('..')
@@ -37,7 +37,7 @@ class Insert:
         '''
         #loca=str(2)
         for i in range(0, lenth):
-                xmlpath =rootdir + '/' + filetypelist[i] + '/' + 'uut_com.xml'
+                xmlpath =rootdir + '/' + filetypelist[i] + '/' + 'uut-com.xml'
                 #print(filetypelist[i])
 
                 tree = ET.parse(xmlpath)
@@ -46,22 +46,23 @@ class Insert:
                 count = 0
                 num=0
                 tempDict = {}
-
+                #score需要
+                #channels = root.find('channelinfo')
+                #score=channels.find('score')
                 for item in root.findall('item'):
                     response_list = []
                     cmd_list = []
                     # tempDict['id']=str(count)
                     responseText = item.findall('response')
                     cmdText = item.findall('cmd')
-                    if num == 13:
 
-                        for childText in responseText:  # 利用getchildren方法得到子节点
-                            # print(childNode.tag)
-                            print(i)
-                            print(childText.text)
-                            response_list.append(preprocess.str_process(childText.text, 1))
-                            print("=======after")
-                            print(preprocess.str_process(childText.text, 1))
+                    for childText in responseText:  # 利用getchildren方法得到子节点
+                        # print(childNode.tag)
+                        print(i)
+                        print(childText.text)
+                        response_list.append(preprocess.str_process(childText.text, 1))
+                        print("=======after")
+                        print(response_list)
 
 
                     for childText in cmdText:
@@ -69,7 +70,7 @@ class Insert:
 
                     tempDict.update({count: {"cmd": cmd_list}})
                     tempDict[count].update({"response": response_list})
-                    #print(tempDict[count])
+                    print(tempDict[count])
                     count += 1
                     num+=1
 
@@ -77,12 +78,11 @@ class Insert:
                 value = (filelocation,filetypelist[i],tempJson)
                 #print(tempJson)
 
+                cur.execute('insert into tsp_full_info values(null,%s,%s,%s,0)', value)
 
-                #cur.execute('insert into tsp_full_info values(null,%s,%s,%s,0)', value)
+                conn.commit()
 
-                #conn.commit()
-
-                #conn.rollback()
+                conn.rollback()
 
         cur.close()
         conn.close()
@@ -92,24 +92,30 @@ class Insert:
     def file_type(self):
         path1 = os.path.abspath('..')
         #print(path1)
-        fileloaction=input()
-        rootdir = path1 + '/datas/data/'+fileloaction
+        filelocation=input()
+        rootdir = path1 + '/datas/data/'+filelocation
         #print(rootdir)
         namelist = []
 
         for dirs in os.listdir(rootdir):
             namelist.append(dirs)
 
-        return rootdir, namelist,fileloaction
+        return rootdir, namelist, filelocation
 
 
+def counter():
+    global s  # 引用全局变量
+    s = s + 1
+
+    return s
 
 def main():
     # print("是否执行此程序")
     # command = input()
 
-    insert = Insert()
-    insert.get_file()
+    for i in range(5):
+        a = counter()
+        print(a)
 
 
 
