@@ -9,10 +9,10 @@ import random
 从Rule中提取的更普通的规则context,from都一致to按照频率汇集
 '''
 
-@Tper.AddTypeCheckerDecorator(_context=tuple,_original=str,_to=dict,_kind=None,_score=int,_frequence=int)
+@Tper.AddTypeCheckerDecorator(_context=tuple,_original=str,_to=dict,_kind=str,_score=int,_frequence=int)
 class CommonRule(object):
 
-    def __init__(self,context=None,original=None,to=None,kind=None,score=0,frequence=0):
+    def __init__(self,context=None,original=None,to=None,_kind=None,score=0,frequence=0):
         '''
         :param contexts: 一个规则的上下文 <前文，后文>
         :param original: 原始的字符
@@ -23,7 +23,7 @@ class CommonRule(object):
         self._original = original
         self._to = to
         self._random_choiced = []
-        self._kind = kind
+        self._kind = _kind
         self._score = score
         self._frequence = frequence
 
@@ -106,6 +106,6 @@ class CommonRule(object):
         return list(self._to.keys())[middle]
 
     def __str__(self):
-        return "rule [context=%s,original=%s,to=%s,kind=%s,socre=%s,frequence=%s]" % (
+        return "rule [context=%s,original=%s,to=%s,_kind=%s,socre=%s,frequence=%s]" % (
          self._context, self._original, self._to,self._kind,self._score,self._frequence)
 
