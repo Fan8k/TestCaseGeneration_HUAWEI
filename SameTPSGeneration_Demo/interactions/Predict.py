@@ -8,9 +8,11 @@ from services.ExtractRuler import ExtractRuler
 from utils.ExtractLocationInfo import ExtractLocationInfo
 from services.RuleDecorater import RuleDecorater
 from services.RuleMerger import RuleMerger
+from services.RuleSorter import RuleSorter
 from daos.GetXML import GetXML
 from daos.WriteBack import WriteBack
-import time
+from services.DataSorter import DataSorter
+
 '''
 输入原型组数据预测生成相应的模型组数据
 '''
@@ -22,14 +24,17 @@ class Predict:
         输入想要预测的原型组文件的绝对路径，所用到的规则
         :param path: 原型组文件的绝对路径
         :param rules: 所用到的规则
-        :yield 每次更新一个item就返回生成
+        :return 所有已经按照指标从高到底排好序的数据
         '''
         dataMatch = DataMatcher(path)
-        yield from dataMatch.match(rules)
+        data_info_dict = dataMatch.match(rules)
+        data_info_list=DataSorter.sort_by_scoreAndFrequence(data_info_dict)
+        return data_info_list
 
     def test(self,proto_items,rules):
         dataMatch = DataMatcher("")
         yield from dataMatch._match_item(proto_items,rules)
+
 
 if __name__ == "__main__":
     path = "/home/inspur/li/SameTPSGeneration_Demo/datas/data/1/001_normalTest/com.xml"
@@ -50,7 +55,7 @@ if __name__ == "__main__":
     rules = RuleDecorater.orinial_rule_decorater([(':', "["), ('\[', 'P')], encode_rules)
     #装饰之后需要进行按照上下文和from进行合并 提成更普通的规则
     common_rules = RuleMerger.mergeredBy_contextOrigin(rules)
-
+    common_rules = RuleSorter.sort_by_scoreAndFrequence(common_rules)
     print("通用规则")
     print(common_rules)
     for com in common_rules:

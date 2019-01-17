@@ -8,6 +8,7 @@ from services.ExtractRuler import ExtractRuler
 from utils.ExtractLocationInfo import ExtractLocationInfo
 from services.RuleDecorater import RuleDecorater
 from services.RuleMerger import RuleMerger
+from services.RuleSorter import RuleSorter
 from interactions.Predict import Predict
 from models.Item import Item
 from daos.GetXML import GetXML
@@ -27,8 +28,8 @@ def create_item():
     # model_items.append(Item([r'test qbarcode\r'], [r'\r\nOK\r\r\n\r\r\n  \(1)\UUT_SWT(1)\Qbarcode(1)Pass [00:00:00.000]\r\r\n  qbarcodePass [barcode:023DUA0147258963]\r\r\n  \(1)\UUT_SWT(1)\Qbarcode(*)Pass [00:00:00.000]\r\r\n\UUT_SWT&gt; '], 0, '1', 1))
     # return proto_items,model_items
     st = SelectObject()
-    proto_items = st.selected_object('5','001_normalTest')
-    model_items = st.selected_object('5','031_checkTest_testservice_Fail')
+    proto_items = st.selected_object('2','001_normalTest')
+    model_items = st.selected_object('2','001_checkTest_testPweElabelQuery_Fail')
     return proto_items,model_items
 
 
@@ -55,7 +56,8 @@ if __name__ == "__main__":
     #rules = RuleDecorater.rule_word_decorater(r"\[barcode:", encode_rules)
     rules = RuleDecorater.orinial_rule_decorater([(':', "["), ('\[', 'P')], encode_rules)
     # 装饰之后需要进行按照上下文和from进行合并 提成更普通的规则
-    common_rules = RuleMerger.mergeredBy_contextOrigin(rules)
+    common_rules = RuleMerger.mergeredBy_origin_igonreCase(rules,2)
+    common_rules = RuleSorter.sort_by_scoreAndFrequence(common_rules)
     print("通用规则")
     #print(common_rules)
     for com in common_rules:

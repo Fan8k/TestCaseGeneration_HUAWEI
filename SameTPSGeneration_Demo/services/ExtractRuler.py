@@ -57,7 +57,7 @@ class ExtractRuler:
                      #找出修改点及其在原来字符串中的位置信息
                      results = self._find_change_points(ExtractRuler.sp.str_process(pri_item.responses[response_index],1),ExtractRuler.sp.str_process(model_item.responses[response_index],1))
                      _contexts = ExtractRuler.cs.between_changes_context(results[0],len(results[1]))
-                     rules.extend(ExtractRuler.rs.pack_rules(_contexts,results[1],self.location,self.type))
+                     rules.extend(ExtractRuler.rs.pack_rules(_contexts,results[1],self.location,self.type,model_item.score))
         return rules
 
     def _find_change_points(self,pri_response_str,model_response_str):
@@ -65,7 +65,7 @@ class ExtractRuler:
         根据两个item的reponse 字符串找出所有的更改点
         :param pri_response_str:  原字符串 update service loopmode 1\\r||update pass ratio 2
         :param model_response_str: 新字符串 update service fail 1\\r||update pass ratio 2
-        :return:（[<from:to>,<from,to>],[common context，common context，common context]）
+        :return:（[common context，common context，common context],[<from:to>,<from,to>]）
         '''
 
         results = ExtractRuler.differ.compare(pri_response_str,model_response_str)

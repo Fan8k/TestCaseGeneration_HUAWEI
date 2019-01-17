@@ -12,7 +12,7 @@ from models.Rule import Rule
 class RulesSolver:
 
 
-    def pack_rules(self,change_contexts,change_points,rule_location_info,file_name):
+    def pack_rules(self,change_contexts,change_points,rule_location_info,file_name,score):
        '''
        将context和rule分装到rules对象中
        :param change_contexts:[('一个前context','后context')]
@@ -21,5 +21,5 @@ class RulesSolver:
        '''
        rules = []
        for index,change_context in enumerate(change_contexts):
-           rules.append(Rule(change_context,change_points[index][0],change_points[index][1],rule_location_info,file_name))
+           rules.append(Rule(change_context,change_points[index][0].strip(" "),change_points[index][1].strip(" "),rule_location_info,file_name,score))
        return rules
