@@ -1,19 +1,21 @@
 import xml.etree.ElementTree as ET
 import os
-import os.path
 import json
 import sys
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-print(sys.path)
+print(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from models import CommonRule
 from utils.MySqlConnectionFactory import MysqlConnectFactory
 from preprocess.StrProcess import StrProcess
+
 
 '''
 author:cll
 '''
 s=0
 class Insert:
-    def get_file(self):
+    def insert_cmd_response(self):
         #path1 = os.path.abspath('..')
         #print(path1)
 
@@ -103,19 +105,50 @@ class Insert:
         return rootdir, namelist, filelocation
 
 
-def counter():
-    global s  # 引用全局变量
-    s = s + 1
+    def insert_common_rules(self,common_rules):
+        Mysql_factory = MysqlConnectFactory()
+        conn = Mysql_factory.get_connect()
 
-    return s
+        conn.set_charset('utf8')
+        cur = conn.cursor()
+        cur.execute('SET NAMES utf8;')
+        cur.execute('SET CHARACTER SET utf8;')
+        cur.execute('SET character_set_connection=utf8;')
+        context_dic={}
+        for common_rule in common_rules:
+            dict={}
+            dict.update({"front": common_rule.context[0], "later": common_rule.context[1]})
+            context_json = json.dumps(dict, ensure_ascii=False)
+            to_json = json.dumps(common_rule.to, ensure_ascii=False)
+
+            value = (context_json, common_rule.original, to_json,
+                  common_rule.kind, common_rule.score, common_rule.frequence)
+            cur.execute('insert into common_rule values(null,%s,%s,%s,%s,%s,%s)', value)
+            conn.commit()
+
+            conn.rollback()
+
+        cur.close()
+        conn.close()
+
+
+
+
 
 def main():
     # print("是否执行此程序")
     # command = input()
+    info_list=[]
+    for i in range(2):
+        s_info=CommonRule.CommonRule(context=("(1)\\UUT_SWT(1)\\BiosCheck(1)Pass [00:00:01.000] bios_check",
+                                              "] 100ge_i2cPass [Pass] 100ge_txdisPass [Pass] 100ge_txenPass "),
+                                     original="Pass [Pass", to={"Fail[Fail": 3, "Fail[Fail]": 2}, _kind="121", score=2,
+                                     frequence=i)
+        info_list.append(s_info)
+    insertion=Insert()
+    insertion.insert_common_rules(info_list)
 
-    for i in range(5):
-        a = counter()
-        print(a)
+
 
 
 

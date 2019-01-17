@@ -1,18 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="inspur@10.131.252.141:22">
+  <component name="PublishConfigData" autoUpload="Always" serverName="10.131.252.141">
     <serverData>
-      <paths name="inspur@10.131.252.141:22">
+      <paths name="10.131.252.141">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/inspur/li/cll" local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="root@118.25.99.101:22">
-        <serverdata>
-          <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/li/cll" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

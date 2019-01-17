@@ -56,13 +56,13 @@ def main():
     path1 = os.path.abspath('..')
     print(path1)
     filepath = path1 + '/datas/data/1/001_normalTest/com.xml'
-    get_xml = GetXML()
-    itemlist = get_xml.read_file(filepath, filetype)
-    print(itemlist)
-    # itemlist = SelectObject()
-    # item = itemlist.selected_object(location, filetype)
-    # for itemlist1 in item:
-    #     print(itemlist1.responses)
+    # get_xml = GetXML()
+    # itemlist = get_xml.read_file(filepath, filetype)
+    # print(itemlist)
+    itemlist = SelectObject()
+    item = itemlist.selected_object(location, filetype)
+    for itemlist1 in item:
+        print(itemlist1.responses)
 
 
 

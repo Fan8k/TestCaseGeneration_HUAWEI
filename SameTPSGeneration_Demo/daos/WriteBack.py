@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 import sys
 import os
-#import uuid
+
 
 import os.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -10,65 +10,80 @@ from GetXML import GetXML
 '''
 
 '''
-file_count = 0#全局计数器，用来命名
+
 class WriteBack():
 
-    def newxml(self,itemlist=[],filepath=None,item_num=0):
+    def newxml(self,item_info_list=[],filepath=None):
         '''
-        itemlist[]：传入itemlist集合
+        item_info_list：传入item相关信息的列表，里面是一个个元组
         filepath：传入的原型xml的完整路径
         item_num: 传入修改的item的位置，第几个item被修改
         '''
         path1 = os.path.abspath('..')
-
-        global file_count
-        file_count+=1
-        path2 = path1 + '/output/' + itemlist[0].location_info+'/'+str(file_count)
-        self.mkdir(path2)
+        #path2 = path1 + '/output/' + item_info_list[0][0][0].location_info
 
 
-        tree = ET.parse(filepath)
-        root = tree.getroot()
-        first_item = root.find('channelinfo')
-        score = ET.Element('score')
-        score.text = '1'
-        first_item.append(score)
-        root.append(first_item)
-        if os.path.exists(path2+'/newnormalcom.xml') is not True:
-            get_xml = GetXML()
-            normalcount = 0
-            #插入新的标签score
-            normal_itemlist = get_xml.read_file(filepath)
+
+        #global file_count
+        for file_count in range(len(item_info_list)):
+
+            path2 = path1 + '/output/' + item_info_list[0][0][0].location_info + '/'+str(file_count+1)
+            self.mkdir(path2)
+            tree = ET.parse(filepath)
+            root = tree.getroot()
+            '''
+            重写原型文件
+            '''
+            tree.write(path2 + '/newnormalcom.xml')
+            first_item = root.find('channelinfo')
+            score = ET.Element('score')
+            score.text = str(item_info_list[file_count][1][1])
+            first_item.append(score)
+            root.append(first_item)
+
+
+            # if os.path.exists(path2 + '/newnormalcom.xml') is not True:
+            #     get_xml = GetXML()
+            #     normalcount = 0
+            #     # 插入新的标签score
+            #     normal_itemlist = get_xml.read_file(filepath)
+            #     for item in root.findall('item'):
+            #         reponse_text = item.findall('response')
+            #         templist = normal_itemlist[normalcount].responses
+            #         for i in range(len(reponse_text)):
+            #             if templist[i] == 'None':
+            #                 reponse_text[i].text = ''
+            #             else:
+            #                 reponse_text[i].text = templist[i]
+            #         tree.write(path2 + '/newnormalcom.xml')
+            #         normalcount += 1
+            '''
+            本次修改的item对应的score
+            '''
+
+
+            #生成模型文件
+            num=0
             for item in root.findall('item'):
-                reponse_text = item.findall('response')
-                templist = normal_itemlist[normalcount].responses
-                for i in range(len(reponse_text)):
-                    if templist[i] == 'None':
-                        reponse_text[i].text = ''
-                    else:
-                        reponse_text[i].text = templist[i]
-                tree.write(path2+'/newnormalcom.xml')
-                normalcount += 1
-        #生成模型文件
+                num+=1
+                if num==item_info_list[file_count][1][0]+1:
+                    '''
+                    item_info_list[file_count][1][0]为修改的item的index
+                    修改loop
+                    '''
+                    loop_text = item.find('loop')
+                    loop_text.text = '3'
+                    reponse_text=item.findall('response')
+                    templist=item_info_list[file_count][num-1].responses
+                    for i in range(len(reponse_text)):
+                        if   templist[i]=='None':
+                            reponse_text[i].text = ''
+                        else:
+                            reponse_text[i].text=templist[i]
 
-        num=0
+                    tree.write(path2+'/com.xml')
 
-        for item in root.findall('item'):
-            num+=1
-            if num==item_num:
-                loop_text = item.find('loop')
-                loop_text.text = '3'
-                reponse_text=item.findall('response')
-                templist=itemlist[num-1].responses
-                for i in range(len(reponse_text)):
-                    if   templist[i]=='None':
-                        reponse_text[i].text = ''
-                    else:
-                        reponse_text[i].text=templist[i]
-
-                tree.write(path2+'/com.xml')
-
-        return file_count
+        #return file_count
 
     def mkdir(self,path1):
         isExists=os.path.exists(path1)
