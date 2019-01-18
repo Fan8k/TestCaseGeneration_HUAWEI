@@ -12,6 +12,7 @@ from daos.WriteBack import WriteBack
 from interactions.Predict import Predict
 from daos.FindallFiletype import FindallFiletype
 from daos.GetXML import GetXML
+from daos.Insert import Insert
 '''
 主入口
 '''
@@ -42,6 +43,8 @@ if __name__ == "__main__":
     common_rules = RuleMerger.mergeredBy_origin_igonreCase(rules,2)
     common_rules = RuleSorter.sort_by_scoreAndFrequence(common_rules)
 
+    #存储
+
     print("通用规则")
     print(common_rules)
     for com in common_rules:
@@ -56,8 +59,10 @@ if __name__ == "__main__":
     #      for com in items:
     #          print(com)
     #      print("\n\n")
-    predicter.predict(path, common_rules)
-    proto_items = GetXML().read_file(path)
-    for com in proto_items:
-        print(com)
-    print("\n\n")
+    aim = predicter.predict(path, common_rules)
+    wb.newxml(aim,path)
+
+    # proto_items = GetXML().read_file(path)
+    # for com in proto_items:
+    #     print(com)
+    # print("\n\n")

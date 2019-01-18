@@ -9,10 +9,10 @@ Item对象:用来描述用例基本单元（命令及其回复信息）
 '''
 
 
-@Tper.AddTypeCheckerDecorator(_cmds=list,_responses=list,_score=int,_location_info=str,_num=int)
+@Tper.AddTypeCheckerDecorator(_cmds=list,_responses=list,_score=float,_location_info=str,_num=int)
 class Item(object):
 
-    def __init__(self,cmds=[],responses=[],score=0,location_info=None,num=0):
+    def __init__(self,cmds=[],responses=[],score=0.0,location_info=None,num=0):
         '''
         每个对象包含属性：
         1.cmds 所包含的所有命令

@@ -9,10 +9,10 @@ import random
 从Rule中提取的更普通的规则context,from都一致to按照频率汇集
 '''
 
-@Tper.AddTypeCheckerDecorator(_context=tuple,_original=str,_to=dict,_kind=str,_score=int,_frequence=int)
+@Tper.AddTypeCheckerDecorator(_context=tuple,_original=str,_to=dict,_kind=str,_score=float,_frequence=int)
 class CommonRule(object):
 
-    def __init__(self,context=None,original=None,to=None,_kind=None,score=0,frequence=0):
+    def __init__(self,context=None,original=None,to=None,_kind=None,score=0.0,frequence=0):
         '''
         :param contexts: 一个规则的上下文 <前文，后文>
         :param original: 原始的字符

@@ -33,14 +33,14 @@ class DataSorter(object):
             total = 0
             for rule in rules:
                 total+=cls._all_sore_and_Frequence_equal(rule.score,rule.frequence)
-            return total
+            return total/len(rules)
 
         @classmethod
         def scores(cls,scores):
             total = 0
             for score in scores:
                 total+=score
-            return total
+            return total/len(scores)
 
         '''
         获取指标的工具类
