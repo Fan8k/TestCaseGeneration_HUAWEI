@@ -80,7 +80,7 @@ class Insert:
                 value = (filelocation,filetypelist[i],tempJson)
                 #print(tempJson)
 
-                cur.execute('insert into tsp_full_info values(null,%s,%s,%s,0)', value)
+                cur.execute('insert into tsp_full_info values(null,%s,%s,%s,1.0)', value)
 
                 conn.commit()
 

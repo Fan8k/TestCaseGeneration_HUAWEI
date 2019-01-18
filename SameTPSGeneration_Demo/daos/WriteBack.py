@@ -29,17 +29,24 @@ class WriteBack():
 
             path2 = path1 + '/output/' + item_info_list[0][0][0].location_info + '/'+str(file_count+1)
             self.mkdir(path2)
-            tree = ET.parse(filepath)
-            root = tree.getroot()
             '''
             重写原型文件
             '''
+            tree = ET.parse(filepath)
+            root = tree.getroot()
+
             tree.write(path2 + '/newnormalcom.xml')
             first_item = root.find('channelinfo')
-            score = ET.Element('score')
-            score.text = str(item_info_list[file_count][1][1])
-            first_item.append(score)
-            root.append(first_item)
+            score_list = first_item.findall('score')
+            if len(score_list) == 0:
+                score = ET.Element('score')
+                score.text = str(item_info_list[file_count][1][1])
+                first_item.append(score)
+                root.append(first_item)
+            else:
+                for i in range(len(score_list)):
+                    score_list[i].text = str(item_info_list[file_count][1][1])
+
 
 
             # if os.path.exists(path2 + '/newnormalcom.xml') is not True:
@@ -74,7 +81,7 @@ class WriteBack():
                     loop_text = item.find('loop')
                     loop_text.text = '3'
                     reponse_text=item.findall('response')
-                    templist=item_info_list[file_count][num-1].responses
+                    templist=item_info_list[file_count][0][num-1].responses
                     for i in range(len(reponse_text)):
                         if   templist[i]=='None':
                             reponse_text[i].text = ''
