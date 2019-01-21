@@ -2,6 +2,7 @@ import xml.etree.ElementTree as ET
 import os
 import json
 import sys
+import re
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 print(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -20,7 +21,7 @@ class Insert:
         #print(path1)
 
         filetypelist=[]
-        rootdir, filetypelist,filelocation=self.file_type()
+        rootdir, filetypelist,filelocation,xml_list=self.file_type()
         #print(filetypelist)
         lenth=len(filetypelist)
         preprocess=StrProcess()
@@ -39,7 +40,7 @@ class Insert:
         '''
         #loca=str(2)
         for i in range(0, lenth):
-                xmlpath =rootdir + '/' + filetypelist[i] + '/' + 'uut-com.xml'
+                xmlpath =rootdir + '/' + filetypelist[i] + '/' + xml_list[i]
                 #print(filetypelist[i])
 
                 tree = ET.parse(xmlpath)
@@ -98,11 +99,20 @@ class Insert:
         rootdir = path1 + '/datas/data/'+filelocation
         #print(rootdir)
         namelist = []
-
+        dir_list = []
+        i=0
         for dirs in os.listdir(rootdir):
             namelist.append(dirs)
+            item_path=os.path.join(rootdir,namelist[i])
+            if os.path.isdir(item_path):
+                for allDir in os.listdir(item_path):
+                    if re.search('.xml', allDir) != None:  # search()会扫描整个string查找匹配,会扫描整个字符串并返回第一个成功的匹配
+                        dir_list.append(allDir)
 
-        return rootdir, namelist, filelocation
+
+
+
+        return rootdir, namelist, filelocation,dir_list
 
 
     def insert_common_rules(self,common_rules):
@@ -137,8 +147,10 @@ class Insert:
 
 def main():
 
-    path1 = os.path.abspath('..')
-    print(path1)
+    File_name=Insert()
+    rootdir, filetypelist, filelocation, dir_list=File_name.file_type()
+    print(dir_list)
+
     # info_list=[]
     # for i in range(2):
     #     s_info=CommonRule.CommonRule(context=("(1)\\UUT_SWT(1)\\BiosCheck(1)Pass [00:00:01.000] bios_check",

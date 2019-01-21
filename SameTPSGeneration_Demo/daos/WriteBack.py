@@ -21,23 +21,26 @@ class WriteBack():
         '''
         path1 = os.path.abspath('..')
         #path2 = path1 + '/output/' + item_info_list[0][0][0].location_info
-
-
-
+        '''
+        重写原型文件
+        '''
+        tree = ET.parse(filepath)
+        root = tree.getroot()
+        path2 = path1 + '/output/new_normal'
+        self.mkdir(path2)
+        tree.write(path2 + '/com.xml')
         #global file_count
         for file_count in range(len(item_info_list)):
 
-            path2 = path1 + '/output/' +str(file_count+1)
-            print(path2)
+            path2 = path1 + '/output/' + str(file_count+1)
+            #print(path2)
             self.mkdir(path2)
-            print(os.path.exists(path1))
-            '''
-            重写原型文件
-            '''
+            #print(os.path.exists(path1))
             tree = ET.parse(filepath)
             root = tree.getroot()
-
-            tree.write(path2 + '/newnormalcom.xml')
+            '''
+            本次修改的item对应的score
+            '''
             first_item = root.find('channelinfo')
             score_list = first_item.findall('score')
             if len(score_list) == 0:
@@ -67,9 +70,7 @@ class WriteBack():
             #                 reponse_text[i].text = templist[i]
             #         tree.write(path2 + '/newnormalcom.xml')
             #         normalcount += 1
-            '''
-            本次修改的item对应的score
-            '''
+
 
 
             #生成模型文件
@@ -86,12 +87,13 @@ class WriteBack():
                     reponse_text=item.findall('response')
                     templist=item_info_list[file_count][0][num-1].responses
                     for i in range(len(reponse_text)):
-                        if   templist[i]=='None':
+                        if templist[i]=='None':
                             reponse_text[i].text = ''
                         else:
                             reponse_text[i].text=templist[i]
 
                     tree.write(path2+'/com.xml')
+                    break
 
         #return file_count
 
