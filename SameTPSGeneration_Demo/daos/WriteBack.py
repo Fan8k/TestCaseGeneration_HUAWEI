@@ -43,8 +43,9 @@ class WriteBack():
             if len(score_list) == 0:
                 score = ET.Element('score')
                 score.text = str(item_info_list[file_count][1][1])
+                score.tail = "\r\n"
                 first_item.append(score)
-                root.append(first_item)
+                #root.append(first_item)
             else:
                 for i in range(len(score_list)):
                     score_list[i].text = str(item_info_list[file_count][1][1])
