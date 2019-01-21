@@ -91,14 +91,14 @@ class RuleMerger:
              value = {}
              for item in values:
                  value[item[0]] = item[1]
-             _rules.append(CommonRule(("",""),key,value,RuleKind.CONFIRM_AND_UNCONFIRM,_rule_scores[key]/temp_times[key],temp_times[key]))
+             _rules.append(CommonRule(("",""),key,value,RuleKind.CONFIRM_AND_UNCONFIRM,_rule_scores[key]/temp_times[key],temp_times[key]/len(rules)))
          #处理没有进行合并的rule
          for rule in rules:
              if rule.original in _not_satisfied_mergeRules:
                  temp = RuleKind.REMINDER
                  if len(rule.context[0])==0 and len(rule.context[1])==0:
                        temp = RuleKind.CONFIRM_AND_UNCONFIRM
-                 _rules.append(CommonRule(rule.context, rule.original,{rule.to: 1},temp,rule.score,1))
+                 _rules.append(CommonRule(rule.context, rule.original,{rule.to: 1},temp,rule.score,1.0/len(rules)))
          return _rules
 
      @classmethod
