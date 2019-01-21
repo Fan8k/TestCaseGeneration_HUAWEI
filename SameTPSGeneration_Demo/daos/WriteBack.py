@@ -27,8 +27,10 @@ class WriteBack():
         #global file_count
         for file_count in range(len(item_info_list)):
 
-            path2 = path1 + '/output/' + item_info_list[0][0][0].location_info + '/'+str(file_count+1)
+            path2 = path1 + '/output/' +str(file_count+1)
+            print(path2)
             self.mkdir(path2)
+            print(os.path.exists(path1))
             '''
             重写原型文件
             '''

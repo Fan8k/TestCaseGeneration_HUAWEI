@@ -34,7 +34,7 @@ class SelectObject(object):
             cur.execute(sql,(location,type))
             data = cur.fetchone()
             location = data[0]
-            _score = data[2]
+            _score = float(data[2])
 
             cmd_response_Info = json.loads(data[1])#字符串转换为字典
 

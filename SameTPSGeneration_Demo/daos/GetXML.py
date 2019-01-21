@@ -31,6 +31,13 @@ class GetXML:
             tmppath = os.path.basename(os.path.dirname(os.path.dirname(filepath)))
             location = tmppath + os.path.basename(os.path.dirname(filepath))
             # print(location)
+            first_item = root.find('channelinfo')
+            score_list = first_item.findall('score')
+            if len(score_list) == 0:
+                _score = 0.0
+            else:
+                for i in range(len(score_list)):
+                    _score = float(score_list[i].text)
             count = 0
 
             for item in root.findall('item'):
@@ -54,7 +61,7 @@ class GetXML:
                     0不删除...
                     1表示去除....
                     '''
-                S_info = Item.Item(cmds=cmd_list, responses=response_list, score=0, location_info=location, num=count)
+                S_info = Item.Item(cmds=cmd_list, responses=response_list, score=_score, location_info=location, num=count)
 
                 item_list.append(S_info)
 

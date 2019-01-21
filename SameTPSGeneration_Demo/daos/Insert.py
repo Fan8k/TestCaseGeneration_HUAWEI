@@ -136,17 +136,18 @@ class Insert:
 
 
 def main():
-    # print("是否执行此程序")
-    # command = input()
-    info_list=[]
-    for i in range(2):
-        s_info=CommonRule.CommonRule(context=("(1)\\UUT_SWT(1)\\BiosCheck(1)Pass [00:00:01.000] bios_check",
-                                              "] 100ge_i2cPass [Pass] 100ge_txdisPass [Pass] 100ge_txenPass "),
-                                     original="Pass [Pass", to={"Fail[Fail": 3, "Fail[Fail]": 2}, _kind="121", score=2,
-                                     frequence=i)
-        info_list.append(s_info)
-    insertion=Insert()
-    insertion.insert_common_rules(info_list)
+
+    path1 = os.path.abspath('..')
+    print(path1)
+    # info_list=[]
+    # for i in range(2):
+    #     s_info=CommonRule.CommonRule(context=("(1)\\UUT_SWT(1)\\BiosCheck(1)Pass [00:00:01.000] bios_check",
+    #                                           "] 100ge_i2cPass [Pass] 100ge_txdisPass [Pass] 100ge_txenPass "),
+    #                                  original="Pass [Pass", to={"Fail[Fail": 3, "Fail[Fail]": 2}, _kind="121", score=2,
+    #                                  frequence=i)
+    #     info_list.append(s_info)
+    # insertion=Insert()
+    # insertion.insert_common_rules(info_list)
 
 
 

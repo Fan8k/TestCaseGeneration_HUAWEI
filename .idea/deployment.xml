@@ -5,7 +5,7 @@
       <paths name="10.131.252.141">
         <serverdata>
           <mappings>
-            <mapping deploy="/li/cll" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/li/cllnew" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
