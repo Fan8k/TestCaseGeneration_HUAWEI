@@ -124,6 +124,13 @@ class DataUpdater:
             for i in range(1, -1, -1):
                 temp_results.insert(index, i)
                 # 增加剪枝操作
+                indexs = []
+                _clash_points = []
+                for j, value in enumerate(temp_results):
+                    if value == 1:
+                        _clash_points.extend(_clash_info[clash_index_map[j]])
+                        indexs.append(clash_index_map[j])
+
                 _temp = set(indexs).intersection(set(_clash_points))
                 if len(_temp) == 0 and len(results)<num:
                     DataUpdater._clear(_clash_info,clash_index_map,results, temp_results, index + 1, _len,num)

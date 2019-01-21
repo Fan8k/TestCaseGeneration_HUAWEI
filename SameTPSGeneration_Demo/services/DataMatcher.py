@@ -10,6 +10,7 @@ from preprocess.StrProcess import StrProcess
 from models.RuleKind import RuleKind
 from services.DataUpdater import DataUpdater
 from services.DataSorter import DataSorter
+from utils.MD5 import MD5
 '''
 数据匹配:该模块拿到对应的规则集合，然后进行原数据规则匹配.
 '''
@@ -72,7 +73,7 @@ class DataMatcher(object):
                         self._result[tuple(proto_items)] = [temp.num,score]
                         proto_items[index] = pri_item
                 #一个response多点匹配
-                if temp.num == 17:
+                if temp.num == 4:
                     print(temp.num)
                 _new_responses = []
                 for _new_response, score in allPointsMatch.match(_response, temp_response, _commonRule_point):
@@ -80,7 +81,7 @@ class DataMatcher(object):
                         item_changed_flag = True
                         _new_responses.append([_new_response,score])
                 if len(_new_responses)>0:
-                   _all_points_all_responses.append([response_index,_new_responses])
+                   _all_points_all_responses.append([response_index,allPointsMatch.remove_samevalue(_new_responses)])
 
             #只要所有点匹配做了修改，就要考虑组合问题了，因为一个response修改可能对应很多[response0,response1,response2]
             if item_changed_flag:
@@ -205,6 +206,7 @@ class DataMatcher(object):
 
     def _match_item_deprecated_(self, proto_items, rules=[]):
         '''
+        过时了
         该方法的思路先找response有无一个修改规则的修改点，如果有是否上下文满足，满足先统计起来，
         所有修改点都统计完毕之后，统一的进行修改.重要修改点，规则context没有点，预测response有点，怎么匹配的问题
         :param proto_items:
@@ -279,6 +281,7 @@ class DataMatcher(object):
     def _change_strValue(self,pri_str,change_points_location):
 
         '''
+        过时了
         修改相应的满足条件的位置的信息
         :param pri_str: 原型组的item的response信息
         :param change_points_location: 修改点的位置
@@ -408,28 +411,35 @@ class allPointsMatch():
                  yield (_new_response,score)
         return None
 
+    @classmethod
+    def remove_samevalue(cls,_new_responses):
+        '''
+        因为同一个response可能不同点组合在一起修改的结果一样，这里只要一个作为结果
+        :param _new_responses: [[response,score],[response,score]]
+        :return: 不重复的[[response,score],[response,score]]
+        '''
+        _temp = []
+        index = 0
+        m = MD5()
+        responses = []
+        for _new_response,score in _new_responses:
+            _new = _new_response.replace(r"\r","").replace(r"\n","").replace(".","").replace(" ","")
+            _md_str = m.encode(_new)
+            if _md_str not in _temp:
+                _temp.append(_md_str)
+                responses.append([_new_response,score])
+            index+=1
+        return responses
+
 
 
 if __name__ =="__main__":
-    # path = "/home/inspur/li/SameTPSGeneration_Demo/datas/data/1/001_normalTest/"
-    # #proto_items = GetXML.read_file("",path)
-    # #print(len(proto_items))
-    # l = re.finditer(r"shabi","\\rOK\\r\\r\\r\\rpass\\(1)\\UUT_SWT(1)\\Qbarcode(1).........................pass [00:00:00.000]\\r\\r  qbarcodePass [barcode:023DUA0147258")
-    # for i in l:
-    #     print(i)
-    # response= "fdfdaifd"
-    # change_points_location = [(2,4,'wo'),(4,8,'ni')]
-    # da = DataMatcher("fd")
-    # print(da._change_strValue(response,change_points_location))
-    # print([i for i in re.finditer("Pass\[pass","fdafdfPass[pass]pass")])
-    # print(da._translate_original("[fadfdsaf]fdaf(fda)fdfsaf{fdafds}fdasf\fdsafdsa.\\"))
-    # print('Pass\[pass')
-    # l = [1,2]
-#     # d = {tuple(l):1}
-#     # l[0] = 3
-#     # print(l)
-#     # d[tuple(l)] = 4
-#     # print(d)
-#     datas_dict = {(1,2):[4,3],(1,3):[4,5]}
-# #     print(sorted(datas_dict.items(), key=lambda item: item[1][1]))
-  print(len([[],[]]))
+   s =r"Fail\\(1)\\UUT_SWT(1)\\Post(1)Fail[00:00:00000]cpu_ddrramFail[Fail]cpu_norflash"
+   a=r"Fail\\(1)\\UUT_SWT(1)\\Post(1)Fail[00:00:00000]cpu_ddrramfail[Fail]cpu_norflash"
+   s = s.replace(r"\r", "").replace(r"\n", "").replace(".", "").replace(" ", "")
+   a = a.replace(r"\r", "").replace(r"\n", "").replace(".", "").replace(" ", "")
+   print(s)
+   print(a)
+   m = MD5()
+   print(m.encode(s))
+   print(m.encode(a))
