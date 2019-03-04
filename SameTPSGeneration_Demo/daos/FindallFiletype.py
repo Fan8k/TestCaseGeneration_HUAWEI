@@ -23,7 +23,7 @@ class FindallFiletype(object):
         cur.execute(sql)
         data = cur.fetchall()
         tempDict={}
-        print(type(data[0][0]))
+        //print(type(data[0][0]))
         for i in range(len(data)):
              #if data[i][0] == data[i+1][0]:
                  tempDict.setdefault(data[i][0], []).append(data[i][1])
