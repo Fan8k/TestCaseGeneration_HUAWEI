@@ -18,14 +18,6 @@ class ParseXml:
         root = tree.getroot()
         tree2 = ET.parse(info_dir)
         root2 = tree2.getroot()
-
-        # print("com_dir:"+os.path.basename(os.path.dirname(os.path.dirname(os.path.dirname(com_dir)))))
-        # print("tmp:"+os.path.basename(os.path.dirname(com_dir)))
-        # tmppath = os.path.join(os.path.basename(os.path.dirname(os.path.dirname(os.path.dirname(com_dir)))),
-        #                        os.path.dirname(os.path.dirname(os.path.dirname(com_dir))))
-        # print("tmppath:"+tmppath)
-        # location =os.path.join(tmppath , os.path.basename(os.path.dirname(filepath)))
-        # print("location:"+location)
         first_item = root2.find('sceneinfo')
         score_list = first_item.findall('score')
         if len(score_list) == 0:
@@ -70,14 +62,6 @@ class ParseXml:
         root = tree.getroot()
         tree2 = ET.parse(info_dir)
         root2 = tree2.getroot()
-
-        # print("com_dir:"+os.path.basename(os.path.dirname(os.path.dirname(os.path.dirname(com_dir)))))
-        # print("tmp:"+os.path.basename(os.path.dirname(com_dir)))
-        # tmppath = os.path.join(os.path.basename(os.path.dirname(os.path.dirname(os.path.dirname(com_dir)))),
-        #                        os.path.dirname(os.path.dirname(os.path.dirname(com_dir))))
-        # print("tmppath:"+tmppath)
-        # location =os.path.join(tmppath , os.path.basename(os.path.dirname(filepath)))
-        # print("location:"+location)
         first_item = root2.find('sceneinfo')
         score_list = first_item.findall('score')
         if len(score_list) == 0:
