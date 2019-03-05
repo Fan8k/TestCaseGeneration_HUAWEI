@@ -24,7 +24,6 @@ class SampleItemSet:
         for i in range(len(dirlist)):#进入某个编码
                 all_item_set=[]
                 namelist, dir_dict1 =self.com_xml(dirlist[i])#所有编码下的文件夹名
-
                 all_info_dir=[]
                 for j in dir_dict1.keys():
                     count=len(dir_dict1[j])
