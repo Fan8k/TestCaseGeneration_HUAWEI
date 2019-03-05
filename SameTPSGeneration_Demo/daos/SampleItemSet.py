@@ -15,7 +15,7 @@ from preprocess.ParseXml import ParseXml
 author:cll
 '''
 s=0
-class Insert:
+class SampleItemSet:
     def insert_cmd_response(self,rootdir):
         #path1 = os.path.abspath('..')
         #print(path1)
@@ -117,19 +117,6 @@ class Insert:
                              #     num += 1
 
 
-        #         tempJson = json.dumps(tempDict, ensure_ascii=False)#字典转str
-        #         value = (filelocation,filetypelist[i],tempJson)
-        #         #print(tempJson)
-        #
-        #         cur.execute('insert into tsp_full_info values(null ,%s,%s,%s,1.0)', value)
-        #
-        #         conn.commit()
-        #
-        #         conn.rollback()
-        #
-        # cur.close()
-        # conn.close()
-
     def list_all_dic(self,rootdir, dict_a, list1):
         if isinstance(dict_a, dict):
             for x in dict_a.keys():
@@ -197,11 +184,6 @@ class Insert:
                     else:
                         break
 
-
-
-
-        #print(tempDict)
-
         return tempDict
 
 
@@ -258,13 +240,13 @@ class Insert:
 
 def main():
 
-    File_name=Insert()
+    File_name=SampleItemSet()
     path1 = os.path.abspath('..')
     root = path1 + '/datas'
     # 默认当前目录从领域开始
     # rootdir / data / field / tps / encode
     for item_set in File_name.insert_cmd_response(root):
-        item_set
+        print(item_set)
     #print("rootdir:", rootdir)
 
     # info_list=[]
