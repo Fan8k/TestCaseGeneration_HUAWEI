@@ -1,68 +1,59 @@
 #coding=utf-8
+from sys import argv
 from os import path as op
 from sys import path as sp
 sp.append(op.dirname(op.dirname(op.abspath(__file__))))
 
+from daos.GetXML import GetXML
+#from daos.WriteBack import WriteBack
+from daos.SampleItemSet import SampleItemSet
 from services.ExtractRuler import ExtractRuler
-from utils.ExtractLocationInfo import ExtractLocationInfo
+from interactions.Predict import Predict
 from services.RuleDecorater import RuleDecorater
 from services.RuleMerger import RuleMerger
 from services.RuleSorter import RuleSorter
 from daos.WriteBack import WriteBack
-from interactions.Predict import Predict
-from daos.FindallFiletype import FindallFiletype
-from daos.GetXML import GetXML
-from daos.Insert import Insert
-'''
-主入口
-'''
 
-if __name__ == "__main__":
-    path = "/home/inspur/li/SameTPSGeneration_Demo/datas/data/2/001_normalTest/uut_com.xml"
-    #tps下
-    findall_filetype = FindallFiletype()
-    tps = findall_filetype.filetype_dic()
-    #tps = ExtractLocationInfo.extract_location_and_type_info(r"/home/inspur/li/SameTPSGeneration_Demo/datas/data")
-    #某一个编码 比如编码1 下面的原型组 001_normalTest
-    location = ['1','2','3','4','5']
-    primary_rules = []
-    for i in location:
-        # 选择的目标编码
-        # if i == '1':
-        #     continue
-        aim_location = i
-        proto_type, model_types = ExtractLocationInfo.filter_proto_type(tps[aim_location], '001_normalTest')
+'''
+argv[1]: 多通道的原型组文件夹路径 比如C://de （de下存储的是info文件和多个com文件）
+argv[2]: 已有的规则文件夹路径 形如: C://数据 (数据下存储的是领域/tps/编码/原型组等)
+argv[3]: flag 标志：1=使用最小编辑距离匹配 2=使用context为空匹配
+argv[4]: 提取的规则是否进行存储 1=否 2=是
+'''
+if __name__ == '__main__':
+    if(len(argv))<=1:
+        print("请输入脚本需要的参数")
+    else:
+        #提取规则
+        sampler = SampleItemSet()
+        primary_rules = []
         extractRuler = ExtractRuler()
-        # 整个编码下所有的规则
-        encode_rules = extractRuler.get_encode_rules(aim_location, proto_type, model_types)
-        primary_rules.extend(encode_rules)
-        # 原始规则进行装饰和合并
-        # 这里只是进行barcode 单词装饰
-    rules = RuleDecorater.orinial_rule_decorater([(':', "["), ('\[', 'P')], primary_rules)
-    #装饰之后需要进行按照上下文和from进行合并 提成更普通的规则
-    common_rules = RuleMerger.mergeredBy_origin_igonreCase(rules,2)
-    common_rules = RuleSorter.sort_by_scoreAndFrequence(common_rules)
+        for item_set in sampler.insert_cmd_response(argv[2]):
+            #一个编码下所有的多通道规则[[com1_原型组.xml,com1_模型组.xml],[],[]]
+            for item_list in item_set:
+                for i in range(1,len(item_list)):
+                    primary_rules.extend(extractRuler.get_rules_from_items(item_list[0],item_list[i]))
+        #规则处理
+        rules = RuleDecorater.orinial_rule_decorater([(':', "["), ('\[', 'P')], primary_rules)
 
-    #存储
+        if argv[3]==2:
+           # 装饰之后需要进行按照上下文和from进行合并 提成更普通的规则
+           common_rules = RuleMerger.mergeredBy_origin_igonreCase(rules,2)
+        else:
+           common_rules = RuleMerger.mergeredBy_contextOrigin(rules)
+        common_rules = RuleSorter.sort_by_scoreAndFrequence(common_rules)
 
-    print("通用规则")
-    print(common_rules)
-    for com in common_rules:
-        print(com)
+        #if argv[4]==2:
+            #sampler.insert_common_rules(common_rules)
 
-    print("预测\n\n")
+        #预测
+        parse_prototype = GetXML()
+        predicter = Predict()
+        wb = WriteBack()
+        for items, comlist in parse_prototype.read_file(argv[1]):  # 获取文件夹下所有com.xml文件内容
+            #每次返回一个通道的一个com.xml文件的item集合
+            aim = predicter.predict(items, common_rules)
+            wb.newxml(aim, comlist)
 
-    predicter = Predict()
-    wb = WriteBack()
-    # for items in predicter.predict(path, common_rules):
-    #      #wb.newxml(items,path)
-    #      for com in items:
-    #          print(com)
-    #      print("\n\n")
-    aim = predicter.predict(path, common_rules)
-    wb.newxml(aim,path)
-
-    # proto_items = GetXML().read_file(path)
-    # for com in proto_items:
-    #     print(com)
-    # print("\n\n")
+        if argv[4]==2:
+            sampler.delete_all();

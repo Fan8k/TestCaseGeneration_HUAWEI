@@ -11,35 +11,51 @@ from models.RuleKind import RuleKind
 class RuleMerger:
 
      @classmethod
-     def mergeredBy_contextOrigin(cls,rules):
-         '''
-         方法过时
-         该方法是按照如果(上下文,from)都相同才算一个规则
-         :param rules:
-         :return:
-         '''
-         temp = {}
-         for rule in rules:
-             #按照上下文和修改点找对应的上下文
-             if temp.get((rule.context,rule.original)) == None:
-                 temp[(rule.context, rule.original)] = {rule.to:1}
-             else:
-                 #如果不为空，只能说明有了to加进来了，但是需要判断to是否一样
-                 if temp.get((rule.context, rule.original)).get(rule.to) == None:
-                    #没有就初始化
-                    temp[(rule.context, rule.original)][rule.to] = 1
-                 else:
-                    #如果存在就加1
-                    temp[(rule.context, rule.original)][rule.to] +=1
-         rules = []
-         for key,value in temp.items():
-             #按照to出现的次数排序（从大到小和从小到大都行）
-             values = sorted(value.items(),key=lambda times:times[1])
-             value = {}
-             for item in values:
-                 value[item[0]] = item[1]
-             rules.append(CommonRule(key[0],key[1],value))
-         return  rules
+     def mergeredBy_contextOrigin(cls, rules):
+        '''
+        该方法是按照如果(上下文,from)都相同才算一个规则
+        :param rules:
+        :return:
+        '''
+        temp = {}
+        _rule_score_and_times = {}
+        for rule in rules:
+            # 按照上下文和修改点找对应的上下文,from 不区分大小写
+            if temp.get((rule.context, rule.original.lower())) == None:
+                temp[(rule.context, rule.original.lower())] = {rule.to: 1}
+                _rule_score_and_times[(rule.context, rule.original.lower())] = [rule.score, 1]
+            else:
+                # 如果不为空，只能说明有了to加进来了，但是需要判断to是否一样
+                if temp.get((rule.context, rule.original.lower())).get(rule.to) == None:
+                    # 没有就初始化
+                    temp[(rule.context, rule.original.lower())][rule.to] = 1
+                else:
+                    # 如果存在就加1
+                    temp[(rule.context, rule.original.lower())][rule.to] += 1
+                _rule_score_and_times[(rule.context, rule.original.lower())] = [
+                    rule.score + _rule_score_and_times[(rule.context, rule.original.lower())][0],
+                    _rule_score_and_times[(rule.context, rule.original.lower())][1] + 1]
+        total_rules = len(rules)
+        rules = []
+        for key, value in temp.items():
+            # 按照to出现的次数排序（从大到小和从小到大都行）
+            values = sorted(value.items(), key=lambda times: times[1])
+            value = {}
+            for item in values:
+                value[item[0]] = item[1]
+            # context为空的rule
+            if key[0][0] == "" and key[0][1] == "":
+                rules.append(CommonRule(("", ""), key[1], value, RuleKind.CONFIRM_AND_UNCONFIRM,
+                                        _rule_score_and_times[(key[0], key[1])][0] /
+                                        _rule_score_and_times[(key[0], key[1])][1],
+                                        _rule_score_and_times[(key[0], key[1])][1] / total_rules))
+            # context不为空的rule
+            else:
+                rules.append(CommonRule(key[0], key[1], value, RuleKind.REMINDER,
+                                        _rule_score_and_times[(key[0], key[1])][0] /
+                                        _rule_score_and_times[(key[0], key[1])][1],
+                                        _rule_score_and_times[(key[0], key[1])][1] /total_rules ))
+        return rules
 
 
      @classmethod

@@ -9,6 +9,7 @@ from daos.GetXML import GetXML
 from preprocess.StrProcess import StrProcess
 from models.RuleKind import RuleKind
 from services.DataUpdater import DataUpdater
+from services.RuleMatcher import RuleMatcher
 from services.DataSorter import DataSorter
 from utils.MD5 import MD5
 '''
@@ -17,17 +18,14 @@ from utils.MD5 import MD5
 
 class DataMatcher(object):
 
-    def __init__(self,new_proto_type_path):
+    def __init__(self):
         #这个就是需要预测生成的原型组路径
-        self._proto_type = new_proto_type_path
-        self._getXml = GetXML()
         self._sp = StrProcess()
         #存储所有预测生成是数据信息
         self._result = {}
 
-    def match(self,rules=[]):
+    def match(self,proto_items,rules=[]):
         '''
-        生成器的写法
         将原模型数据组织成items对象集合，然后每个item的responses和规则进行匹配，看看原数据是否有item需要修改
         1.改动一个位置就立马生成xml
         2.改动整个response就立马返回
@@ -39,7 +37,7 @@ class DataMatcher(object):
         :return: 包装好的items集合
         '''
         # 需要预测的原型组数据items
-        proto_items = self._getXml.read_file(self._proto_type)
+        proto_items = proto_items
         for index, item in enumerate(proto_items):
             # 先深度拷贝一份
             temp = copy.deepcopy(item)
@@ -97,7 +95,6 @@ class DataMatcher(object):
     def _assemble_item(self,item,_all_points_all_responses):
         '''
         组合所有的(response_index,[response1,response2])
-
         :param item:
         :param _all_points_all_responses:
         :return:
@@ -339,10 +336,8 @@ class singlePointMatch:
                         if a_context_len > ((len(preprocess_response) + 1) - stop_index):
                             continue
                         else:
-                            if _commonRule.context[0] == preprocess_response[
-                                                         start_index - b_context_len:start_index] and \
-                                    _commonRule.context[1] == preprocess_response[
-                                                              stop_index:stop_index + a_context_len]:
+                            if RuleMatcher.shortestEditDistance(_commonRule.context[0], preprocess_response[start_index - b_context_len:start_index],0) \
+                                and RuleMatcher.shortestEditDistance(_commonRule.context[1],preprocess_response[ stop_index:stop_index + a_context_len],0):
                                 # 不能立马就改，因为后来的修改也是按照之前的模式匹配找到的位置，一改位置就乱了，只能先记住那些点要改
                                 _canUpdate_flag = True
                 # 只有能修改时，才进行修改和返回，要不然直接忽略这个点
@@ -358,6 +353,7 @@ class singlePointMatch:
 
 #整个item匹配
 class allPointsMatch():
+
 
     @classmethod
     def match(cls, response, preprocess_response, _commonRule_point):
@@ -393,10 +389,8 @@ class allPointsMatch():
                         if a_context_len > ((len(preprocess_response) + 1) - stop_index):
                             continue
                         else:
-                            if _commonRule.context[0] == preprocess_response[
-                                                         start_index - b_context_len:start_index] and \
-                                    _commonRule.context[1] == preprocess_response[
-                                                              stop_index:stop_index + a_context_len]:
+                            if RuleMatcher.shortestEditDistance(_commonRule.context[0], preprocess_response[start_index - b_context_len:start_index],0) \
+                                and RuleMatcher.shortestEditDistance(_commonRule.context[1], preprocess_response[stop_index:stop_index + a_context_len], 0):
                                 # 不能立马就改，因为后来的修改也是按照之前的模式匹配找到的位置，一改位置就乱了，只能先记住那些点要改
                                 _canUpdate_flag = True
                 # 只有能修改时，才进行修改和返回，要不然直接忽略这个点

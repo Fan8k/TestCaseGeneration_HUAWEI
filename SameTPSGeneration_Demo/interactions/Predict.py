@@ -10,7 +10,7 @@ from services.RuleDecorater import RuleDecorater
 from services.RuleMerger import RuleMerger
 from services.RuleSorter import RuleSorter
 from daos.GetXML import GetXML
-from daos.WriteBack import WriteBack
+#from daos.WriteBack import WriteBack
 from services.DataSorter import DataSorter
 
 '''
@@ -19,16 +19,16 @@ from services.DataSorter import DataSorter
 
 class Predict:
 
-    def predict(self,path,rules):
+    def predict(self, proto_items, rules):
         '''
         输入想要预测的原型组文件的绝对路径，所用到的规则
         :param path: 原型组文件的绝对路径
         :param rules: 所用到的规则
-        :return 所有已经按照指标从高到底排好序的数据
+        :yield 每次更新一个item就返回生成
         '''
-        dataMatch = DataMatcher(path)
-        data_info_dict = dataMatch.match(rules)
-        data_info_list=DataSorter.sort_by_scoreAndFrequence(data_info_dict)
+        dataMatch = DataMatcher()
+        data_info_dict = dataMatch.match(proto_items, rules)
+        data_info_list = DataSorter.sort_by_scoreAndFrequence(data_info_dict)
         return data_info_list
 
     def test(self,proto_items,rules):

@@ -4,7 +4,7 @@ import sys
 import difflib
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from daos.SelectObject import SelectObject
+#from daos.SelectObject import SelectObject
 from utils.MD5 import MD5
 from models.Rule import Rule
 from services.ContextSolver import ContextSolver
@@ -17,7 +17,7 @@ from preprocess.StrProcess import StrProcess
 
 class ExtractRuler:
 
-    st = SelectObject()
+    #st = SelectObject()
     md5 = MD5()
     differ = difflib.Differ()
     cs = ContextSolver()
@@ -155,6 +155,9 @@ class ExtractRuler:
         for model_type in model_types:
             rules.extend(self.get_File_rules(location,pri_type,model_type))
         return rules
+
+    def get_rules_from_items(self,proto_items,model_items):
+        return  self._get_rules(proto_items,model_items)
 
 if __name__ =="__main__":
     ex = ExtractRuler()
