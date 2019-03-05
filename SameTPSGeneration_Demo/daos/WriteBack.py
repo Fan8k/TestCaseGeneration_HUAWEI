@@ -33,7 +33,7 @@ class WriteBack():
            tree = ET.parse(comname)
            tree.write(os.path.join(path2,os.path.basename(comname)))
         for infoname in comlist:
-            if os.path.splitext(os.path.basename(comname)[1]) == ".info":
+            if os.path.splitext(os.path.basename(comname))[1] == ".info":
                 tree_info = ET.parse(infoname)
                 root_info = tree_info.getroot()
                 break

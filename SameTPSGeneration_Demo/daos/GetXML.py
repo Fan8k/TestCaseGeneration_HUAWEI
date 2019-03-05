@@ -26,21 +26,24 @@ class GetXML:
 
 
             parsexml=ParseXml()
-            for info_dir in com_list:
-                ext = os.path.splitext(info_dir)[1]#取文件后缀，找到.info
-                if ext==".info":
-                    break
-            print(info_dir)
+            if com_list:
+                for info_dir in com_list:
+                    ext = os.path.splitext(info_dir)[1]#取文件后缀，找到.info
+                    if ext==".info":
+                        break
+                print(info_dir)
 
-            for com_dir  in com_list :
-                item_list = []
-                if com_dir is not info_dir:
-                    try:
-                        item_list=parsexml.parse_xml(com_dir,info_dir)
+                for com_dir  in com_list :
+                    item_list = []
+                    if com_dir is not info_dir:
+                        try:
+                            item_list=parsexml.parse_xml(com_dir,info_dir)
 
-                        yield item_list,com_list
-                    except FileNotFoundError as e:
-                        print(e)
+                            yield item_list,com_list
+                        except FileNotFoundError as e:
+                           print(e)
+            else:
+                print("路径不正确")
 
 
 
@@ -54,7 +57,7 @@ def main():
 
     for items,comlist in get_xml.read_file(rootdir):#获取文件夹下所有com.xml文件内容
           print(type(items))
-          print(len(items))
+          print("comlist",comlist)
           print(items[0].location_info)
 
     #
