@@ -33,14 +33,16 @@ class WriteBack():
            tree = ET.parse(comname)
            tree.write(os.path.join(path2,os.path.basename(comname)))
         for infoname in comlist:
-            if os.path.splitext(os.path.basename(comname))[1] == ".info":
+            if os.path.splitext(os.path.basename(infoname))[1] == ".info":
                 tree_info = ET.parse(infoname)
                 root_info = tree_info.getroot()
                 break
-        temp_count=self.filecount
+        tree = ET.parse(original_path)
+        root = tree.getroot()
+        temp_count = self.filecount
         for file_count in range(len(item_info_list)):
-
-            path2 = path1 + '/output/' + str(self.filecount+1)
+            self.filecount += 1
+            path2 = path1 + '/output/' + str(self.filecount)
             self.mkdir(path2)
 
             '''
@@ -63,12 +65,8 @@ class WriteBack():
             tree_info.write(os.path.join(path2,os.path.basename(infoname)))
 
 
-
-
-
             #生成模型文件
-            tree = ET.parse(original_path)
-            root = tree.getroot()
+
             num=0
             for item in root.findall('item'):
                 num+=1
