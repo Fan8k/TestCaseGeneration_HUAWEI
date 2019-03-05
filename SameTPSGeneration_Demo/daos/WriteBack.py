@@ -5,14 +5,16 @@ import os
 
 import os.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-#from GetXML import GetXML
-from daos.GetXML import GetXML
-from daos.global_count import  global_count
+from GetXML import GetXML
+#from daos.GetXML import GetXML
+
 '''
 
 '''
 
 class WriteBack():
+    def __init__(self):
+        self.filecount = 0
 
     def newxml(self,item_info_list=[],comlist=[]):
         '''
@@ -21,7 +23,6 @@ class WriteBack():
         item_num: 传入修改的item的位置，第几个item被修改
         '''
         path1 = os.path.abspath('..')
-        #path2 = path1 + '/output/' + item_info_list[0][0][0].location_info
         '''
         重写原型文件
         '''
@@ -29,21 +30,25 @@ class WriteBack():
         path2 = path1 + '/output/001_normalTest'
         self.mkdir(path2)
         for comname  in comlist:
-           tree = ET.parse(original_path)
+           tree = ET.parse(comname)
            tree.write(os.path.join(path2,os.path.basename(comname)))
-        #global file_count
+        for infoname in comlist:
+            if os.path.splitext(os.path.basename(comname)[1]) == ".info":
+                tree_info = ET.parse(infoname)
+                root_info = tree_info.getroot()
+                break
+        temp_count=self.filecount
         for file_count in range(len(item_info_list)):
 
-            path2 = path1 + '/output/' + str(file_count+1)
-            #print(path2)
+            path2 = path1 + '/output/' + str(self.filecount+1)
             self.mkdir(path2)
-            #print(os.path.exists(path1))
-            tree = ET.parse(filepath)
-            root = tree.getroot()
+
             '''
             本次修改的item对应的score
             '''
-            first_item = root.find('channelinfo')
+
+
+            first_item = root_info.find('sceneinfo')
             score_list = first_item.findall('score')
             if len(score_list) == 0:
                 score = ET.Element('score')
@@ -55,27 +60,15 @@ class WriteBack():
                 for i in range(len(score_list)):
                     score_list[i].text = str(item_info_list[file_count][1][1])
 
+            tree_info.write(os.path.join(path2,os.path.basename(infoname)))
 
 
-            # if os.path.exists(path2 + '/newnormalcom.xml') is not True:
-            #     get_xml = GetXML()
-            #     normalcount = 0
-            #     # 插入新的标签score
-            #     normal_itemlist = get_xml.read_file(filepath)
-            #     for item in root.findall('item'):
-            #         reponse_text = item.findall('response')
-            #         templist = normal_itemlist[normalcount].responses
-            #         for i in range(len(reponse_text)):
-            #             if templist[i] == 'None':
-            #                 reponse_text[i].text = ''
-            #             else:
-            #                 reponse_text[i].text = templist[i]
-            #         tree.write(path2 + '/newnormalcom.xml')
-            #         normalcount += 1
 
 
 
             #生成模型文件
+            tree = ET.parse(original_path)
+            root = tree.getroot()
             num=0
             for item in root.findall('item'):
                 num+=1
@@ -94,9 +87,14 @@ class WriteBack():
                         else:
                             reponse_text[i].text=templist[i]
 
-                    tree.write(path2+'/com.xml')
+                    tree.write(os.path.join(path2,os.path.basename(original_path)))
                     break
-
+        for name in comlist:
+            if name is not original_path:
+                tree_other=ET.parse(name)
+                for i in range(temp_count,self.filecount):
+                    path3 = path1 + '/output/' + str(i + 1)
+                    tree_other.write(os.path.join(path3,os.path.basename(name)))
         #return file_count
 
     def mkdir(self,path1):
@@ -104,24 +102,18 @@ class WriteBack():
         if not isExists:
             #不存在路径就创建
             os.makedirs(path1)
-    def test_global(self):
-        count=global_count()
-        for i in range (5):
-            count.gl_int_i+=1
-            print(count.gl_int_i)
+
 
 
 def main():
     path1 = os.path.abspath('..')
     print(path1)
     item_num=3
-    filepath = path1+'/datas/data/1/001_normalTest'
+    filepath = path1+'/datas/data/tps1/1/001_normalTest'
     get_xml = GetXML()
-    for i in range(5):
-        get_xml.test()
-    # itemlist,comlist = get_xml.read_file(filepath)
-    # writeback = WriteBack()
-    # writeback.newxml(itemlist, filepath, comlist)
+
+    for itemlist,comlist in get_xml.read_file(filepath):
+        print(comlist)
 
 
 if __name__=='__main__':

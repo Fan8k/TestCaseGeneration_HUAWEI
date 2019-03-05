@@ -6,20 +6,19 @@ import re
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 print(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
+from utils.MySqlConnectionFactory import MysqlConnectFactory
 from preprocess.StrProcess import StrProcess
 from preprocess.ParseXml import ParseXml
 
 '''
 author:cll
 '''
-s=0
+
 class SampleItemSet:
     def insert_cmd_response(self,rootdir):
         list1=[]
         dir_dict=self.file_type(rootdir)
         parsexml=ParseXml()
-        preprocess=StrProcess()
         dirlist,tpslist=self.list_all_dic(rootdir,dir_dict,list1)#列出所有编码的路径
         for i in range(len(dirlist)):#进入某个编码
                 all_item_set=[]
@@ -53,13 +52,11 @@ class SampleItemSet:
                     for m in range(len(all_com_dir)):#一个com
                             try:
                                 item_list = parsexml.parse_xml2(all_com_dir[m], all_info_dir[m], tpslist[i])
-                                # print(item_list[1].location_info)
                                 all_item_list.append(item_list)
 
                             except FileNotFoundError as e:
                                 print(e)
                     all_item_set.append(all_item_list)
-                    print("len(all_item_set)",len(all_item_set))
                 yield  all_item_set
 
 
@@ -99,9 +96,7 @@ class SampleItemSet:
                     tempDict.update({dirs: {}})#领域
 
         for root,dirs,files in os.walk(rootdir):
-
             if dirs :
-                #print(dirs)
                 for file in os.listdir(os.path.join(root, dirs[0])):
                     if files is None :
                             flag=1
@@ -136,8 +131,7 @@ class SampleItemSet:
                 files=os.listdir(item_path)
                 files.sort(key=lambda x: (x.split('.')[1],x.split('.')[0]))
                 for allDir in files:
-                    #print(allDir)
-                    #if re.search('.xml', allDir) != None:  # search()会扫描整个string查找匹配,会扫描整个字符串并返回第一个成功的匹配
+
                         if item_path not in dir_dict.keys():
                             dir_dict[item_path] = [allDir]
                         else:
@@ -145,16 +139,57 @@ class SampleItemSet:
             i=i+1
         return namelist,dir_dict
 
+    def insert_common_rules(self,common_rules):
+        Mysql_factory = MysqlConnectFactory()
+        conn = Mysql_factory.get_connect()
+
+        conn.set_charset('utf8')
+        cur = conn.cursor()
+        cur.execute('SET NAMES utf8;')
+        cur.execute('SET CHARACTER SET utf8;')
+        cur.execute('SET character_set_connection=utf8;')
+        context_dic={}
+        for common_rule in common_rules:
+            dict={}
+            dict.update({"front": common_rule.context[0], "later": common_rule.context[1]})
+            context_json = json.dumps(dict, ensure_ascii=False)
+            to_json = json.dumps(common_rule.to, ensure_ascii=False)
+
+            value = (context_json, common_rule.original, to_json,
+                  common_rule.kind, common_rule.score, common_rule.frequence)
+            cur.execute('insert into common_rule values(null,%s,%s,%s,%s,%s,%s)', value)
+            conn.commit()
+
+            conn.rollback()
+
+        cur.close()
+        conn.close()
+
+    def delete_all(self):
+        Mysql_factory = MysqlConnectFactory()
+        conn = Mysql_factory.get_connect()
+
+        conn.set_charset('utf8')
+        cur = conn.cursor()
+        cur.execute('SET NAMES utf8;')
+        cur.execute('SET CHARACTER SET utf8;')
+        cur.execute('SET character_set_connection=utf8;')
+        cur.execute('DELETE FROM testdemo.common_rule WHERE (id >0 )')
+        conn.commit()
+        conn.rollback()
+        cur.close()
+        conn.close()
+
 
 def main():
 
     File_name=SampleItemSet()
     path1 = os.path.abspath('..')
-    root = path1 + '/datas/data'
+    root = path1 + '/datas'
     # 默认当前目录从领域开始
     # rootdir / data / field / tps / encode
     for item_set in File_name.insert_cmd_response(root):
-        print(type(item_set))
+        print(item_set[0])
         print("len(item_set)",len(item_set))
 
 

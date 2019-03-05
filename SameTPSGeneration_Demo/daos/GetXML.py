@@ -23,8 +23,8 @@ class GetXML:
         # filepath是待提取的XML的绝对路径
             getfiledir=GetFileDir()
             com_list=getfiledir.get_filedir(filepath)
-            #com_list=self.get_filedir(filepath)
-            print(com_list)
+
+
             parsexml=ParseXml()
             for info_dir in com_list:
                 ext = os.path.splitext(info_dir)[1]#取文件后缀，找到.info
@@ -37,7 +37,7 @@ class GetXML:
                 if com_dir is not info_dir:
                     try:
                         item_list=parsexml.parse_xml(com_dir,info_dir)
-                        #print(item_list[1].location_info)
+
                         yield item_list,com_list
                     except FileNotFoundError as e:
                         print(e)
