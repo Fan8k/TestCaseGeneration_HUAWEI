@@ -23,42 +23,44 @@ class SampleItemSet:
         dirlist,tpslist=self.list_all_dic(rootdir,dir_dict,list1)#列出所有编码的路径
         for i in range(len(dirlist)):#进入某个编码
                 all_item_set=[]
-                namelist, dir_dict =self.com_xml(dirlist[i])
+                namelist, dir_dict1 =self.com_xml(dirlist[i])#所有编码下的文件夹名
 
                 all_info_dir=[]
-                for j in dir_dict.keys():
-                    count=len(dir_dict[j])
+                for j in dir_dict1.keys():
+                    count=len(dir_dict1[j])
                     break
-                me=0
-                for testname in dir_dict.keys():  # 多少个生成文件包括原型组
+                for testname in dir_dict1.keys():  # 多少个生成文件包括原型组
 
-                    if os.path.splitext(dir_dict[testname][0])[1] == ".info":
-                        infopath = os.path.join(testname, dir_dict[testname][0])
+                    if os.path.splitext(dir_dict1[testname][0])[1] == ".info":
+                        infopath = os.path.join(testname, dir_dict1[testname][0])
                         if os.path.basename(testname) == "001_normalTest":
                             all_info_dir.insert(0, infopath)
 
-                            me=me+1
+
                         else:
                             all_info_dir.append(infopath)
+
                 for k in range(1,count):#每个文件夹有多少个com文件
-                    all_com_dir=[]
+                    all_com_dir = []
+                    for testname in dir_dict1.keys():
+                            filepath=os.path.join(testname,dir_dict1[testname][k])
+                            if os.path.basename(testname) == "001_normalTest":
+                                all_com_dir.insert(0,filepath)
+                            else:
+                                all_com_dir.append(filepath)
 
+                    all_item_list=[]
 
-                    filepath=os.path.join(testname,dir_dict[testname][k])
-                    if os.path.basename(testname) == "001_normalTest":
-                        all_com_dir.insert(0,filepath)
-                    else:
-                        all_com_dir.append(filepath)
-                all_item_list=[]
-                for j in range(len(all_com_dir)):
-                        try:
-                            item_list = parsexml.parse_xml2(all_com_dir[j], all_info_dir[j], tpslist[i])
-                            # print(item_list[1].location_info)
-                            all_item_list.append(item_list)
+                    for m in range(len(all_com_dir)):#一个com
+                            try:
+                                item_list = parsexml.parse_xml2(all_com_dir[m], all_info_dir[m], tpslist[i])
+                                # print(item_list[1].location_info)
+                                all_item_list.append(item_list)
 
-                        except FileNotFoundError as e:
-                            print(e)
-                all_item_set.append(all_item_list)
+                            except FileNotFoundError as e:
+                                print(e)
+                    all_item_set.append(all_item_list)
+                    print("len(all_item_set)",len(all_item_set))
                 yield  all_item_set
 
 
@@ -153,7 +155,8 @@ def main():
     # 默认当前目录从领域开始
     # rootdir / data / field / tps / encode
     for item_set in File_name.insert_cmd_response(root):
-        print(item_set)
+        print(type(item_set))
+        print("len(item_set)",len(item_set))
 
 
 if __name__=='__main__':

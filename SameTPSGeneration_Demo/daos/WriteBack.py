@@ -7,16 +7,17 @@ import os.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 #from GetXML import GetXML
 from daos.GetXML import GetXML
+from daos.global_count import  global_count
 '''
 
 '''
 
 class WriteBack():
 
-    def newxml(self,item_info_list=[],filepath=None):
+    def newxml(self,item_info_list=[],comlist=[]):
         '''
         item_info_list：传入item相关信息的列表，里面是一个个元组
-        filepath：传入的原型xml的完整路径
+        comlist：传入的原型xml的完整路径
         item_num: 传入修改的item的位置，第几个item被修改
         '''
         path1 = os.path.abspath('..')
@@ -24,11 +25,12 @@ class WriteBack():
         '''
         重写原型文件
         '''
-        tree = ET.parse(filepath)
-        root = tree.getroot()
+        original_path = item_info_list[0][0][0].location_info
         path2 = path1 + '/output/001_normalTest'
         self.mkdir(path2)
-        tree.write(path2 + '/com.xml')
+        for comname  in comlist:
+           tree = ET.parse(original_path)
+           tree.write(os.path.join(path2,os.path.basename(comname)))
         #global file_count
         for file_count in range(len(item_info_list)):
 
@@ -102,6 +104,11 @@ class WriteBack():
         if not isExists:
             #不存在路径就创建
             os.makedirs(path1)
+    def test_global(self):
+        count=global_count()
+        for i in range (5):
+            count.gl_int_i+=1
+            print(count.gl_int_i)
 
 
 def main():
@@ -110,9 +117,11 @@ def main():
     item_num=3
     filepath = path1+'/datas/data/1/001_normalTest'
     get_xml = GetXML()
-    itemlist,comlist = get_xml.read_file(filepath)
-    writeback = WriteBack()
-    writeback.newxml(itemlist, filepath, comlist)
+    for i in range(5):
+        get_xml.test()
+    # itemlist,comlist = get_xml.read_file(filepath)
+    # writeback = WriteBack()
+    # writeback.newxml(itemlist, filepath, comlist)
 
 
 if __name__=='__main__':
