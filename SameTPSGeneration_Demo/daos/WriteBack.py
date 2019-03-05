@@ -26,7 +26,7 @@ class WriteBack():
         '''
         tree = ET.parse(filepath)
         root = tree.getroot()
-        path2 = path1 + '/output/new_normal'
+        path2 = path1 + '/output/001_normalTest'
         self.mkdir(path2)
         tree.write(path2 + '/com.xml')
         #global file_count
@@ -108,11 +108,11 @@ def main():
     path1 = os.path.abspath('..')
     print(path1)
     item_num=3
-    filepath = path1+'/datas/data/2/001_normalTest/uut_com.xml'
+    filepath = path1+'/datas/data/1/001_normalTest'
     get_xml = GetXML()
-    itemlist = get_xml.read_file(filepath)
+    itemlist,comlist = get_xml.read_file(filepath)
     writeback = WriteBack()
-    writeback.newxml(itemlist, filepath, item_num)
+    writeback.newxml(itemlist, filepath, comlist)
 
 
 if __name__=='__main__':

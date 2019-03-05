@@ -38,63 +38,13 @@ class GetXML:
                     try:
                         item_list=parsexml.parse_xml(com_dir,info_dir)
                         #print(item_list[1].location_info)
-                        yield item_list
+                        yield item_list,com_list
                     except FileNotFoundError as e:
                         print(e)
 
 
 
-    # def parse_xml(self,xmlpath,info_dir):
-    #     item_list=[]
-    #     preprocess = StrProcess()
-    #     tree = ET.parse(xmlpath)
-    #     root = tree.getroot()
-    #     tree2 = ET.parse(info_dir)
-    #     root2 = tree2.getroot()
-    #
-    #     # print("com_dir:"+os.path.basename(os.path.dirname(os.path.dirname(os.path.dirname(com_dir)))))
-    #     # print("tmp:"+os.path.basename(os.path.dirname(com_dir)))
-    #     # tmppath = os.path.join(os.path.basename(os.path.dirname(os.path.dirname(os.path.dirname(com_dir)))),
-    #     #                        os.path.dirname(os.path.dirname(os.path.dirname(com_dir))))
-    #     # print("tmppath:"+tmppath)
-    #     # location =os.path.join(tmppath , os.path.basename(os.path.dirname(filepath)))
-    #     # print("location:"+location)
-    #     first_item = root2.find('sceneinfo')
-    #     score_list = first_item.findall('score')
-    #     if len(score_list) == 0:
-    #         _score = 0.0
-    #     else:
-    #         for i in range(len(score_list)):
-    #             _score = float(score_list[i].text)
-    #     count = 0
-    #
-    #     for item in root.findall('item'):
-    #         cmd_list = []
-    #         response_list = []
-    #
-    #         response_text = item.findall('response')
-    #         lenth = len(response_text)
-    #         for i in range(lenth):
-    #             # print(tmp.text)
-    #             response_list.append(preprocess.str_process(response_text[i].text, 0))
-    #             '''
-    #               0不删除...
-    #               1表示去除....
-    #            '''
-    #
-    #         cmd_text = item.findall('cmd')
-    #         for childText in cmd_text:
-    #             cmd_list.append(preprocess.str_process(childText.text, 0))
-    #             '''
-    #             0不删除...
-    #             1表示去除....
-    #             '''
-    #         S_info = Item.Item(cmds=cmd_list, responses=response_list, score=_score, location_info=xmlpath, num=count)
-    #
-    #         item_list.append(S_info)
-    #
-    #         count += 1
-    #     return item_list
+
 
 
 def main():
@@ -102,10 +52,10 @@ def main():
     rootdir = path1 + '/datas/data/tps1/1' + '/001_normalTest'
     get_xml = GetXML()
 
-    for items in get_xml.read_file(rootdir):#获取文件夹下所有com.xml文件内容
+    for items,comlist in get_xml.read_file(rootdir):#获取文件夹下所有com.xml文件内容
           print(type(items))
           print(len(items))
-          print(items[1])
+          print(items[0].location_info)
 
     #
     # mnum = 0

@@ -23,6 +23,7 @@ class SampleItemSet:
         filetypelist=[]
         list1=[]
         dir_dict=self.file_type(rootdir)
+        print(dir_dict)
         parsexml=ParseXml()
         preprocess=StrProcess()
         dirlist,tpslist=self.list_all_dic(rootdir,dir_dict,list1)#列出所有编码的路径
@@ -118,7 +119,7 @@ class SampleItemSet:
 
 
     def list_all_dic(self,rootdir, dict_a, list1):
-        if isinstance(dict_a, dict):
+        if isinstance(dict_a, dict) and dict_a:
             for x in dict_a.keys():
                 # print(rootdir)
                 # print(x)
@@ -127,8 +128,11 @@ class SampleItemSet:
                 # rootdir=os.path.join(rootdir,x)
                 self.list_all_dic(tmpdir, temp_value, list1)
         else:
-            for info in dict_a:
-                list1.append(os.path.join(rootdir, info))
+            if dict_a:
+                for info in dict_a:
+                    list1.append(os.path.join(rootdir, info))
+            else:
+                list1.append(rootdir)
         list2=[]
         for i in list1:
             list2.append(i.replace(rootdir+"/",""))
@@ -242,11 +246,11 @@ def main():
 
     File_name=SampleItemSet()
     path1 = os.path.abspath('..')
-    root = path1 + '/datas'
+    root = path1 + '/datas/data'
     # 默认当前目录从领域开始
     # rootdir / data / field / tps / encode
     for item_set in File_name.insert_cmd_response(root):
-        print(item_set)
+        item_set
     #print("rootdir:", rootdir)
 
     # info_list=[]
