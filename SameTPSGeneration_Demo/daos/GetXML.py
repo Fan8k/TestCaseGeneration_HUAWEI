@@ -31,8 +31,6 @@ class GetXML:
                     ext = os.path.splitext(info_dir)[1]#取文件后缀，找到.info
                     if ext==".info":
                         break
-                print(info_dir)
-
                 for com_dir  in com_list :
                     item_list = []
                     if com_dir is not info_dir:
@@ -60,17 +58,7 @@ def main():
           print("comlist",comlist)
           print(items[0].location_info)
 
-    #
-    # mnum = 0
-    # nmum = 0
-    # for item in items:
-    #     responselist = item.responses
-    #     for i in range(len(responselist)):
-    #         mnum += responselist[i].count("Pass")
-    #         nmum += responselist[i].count("PASS")
-    #
-    # print(nmum)
-    # print(mnum + nmum)
+
 
 
 if __name__ == '__main__':
