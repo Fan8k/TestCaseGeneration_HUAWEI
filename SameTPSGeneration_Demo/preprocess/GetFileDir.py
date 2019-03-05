@@ -13,7 +13,7 @@ class GetFileDir:
         for maindir, subdir, file_name_list in os.walk(filepath):
 
 
-            file_name_list.sort(key=lambda x: x.split('.')[1])
+            file_name_list.sort(key=lambda x: (x.split('.')[1],x.split('.')[0]))
             for filename in file_name_list:
                 apath = os.path.join(maindir, filename)  # 合并成一个完整路径
                 ext = os.path.splitext(apath)[1]  # 获取文件后缀 [0]获取的是除了文件名以外的内容

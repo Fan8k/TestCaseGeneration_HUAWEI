@@ -23,7 +23,7 @@ class SampleItemSet:
         filetypelist=[]
         list1=[]
         dir_dict=self.file_type(rootdir)
-        print(dir_dict)
+
         parsexml=ParseXml()
         preprocess=StrProcess()
         dirlist,tpslist=self.list_all_dic(rootdir,dir_dict,list1)#列出所有编码的路径
@@ -36,7 +36,6 @@ class SampleItemSet:
         # cur.execute('SET NAMES utf8;')
         # cur.execute('SET CHARACTER SET utf8;')
         # cur.execute('SET character_set_connection=utf8;')
-        print(dirlist)
 
 
         for i in range(len(dirlist)):#进入某个编码
@@ -200,7 +199,7 @@ class SampleItemSet:
             item_path = os.path.join(rootdir, namelist[i])
             if os.path.isdir(item_path):
                 files=os.listdir(item_path)
-                files.sort(key=lambda x: x.split('.')[1])
+                files.sort(key=lambda x: (x.split('.')[1],x.split('.')[0]))
                 for allDir in files:
                     #print(allDir)
                     #if re.search('.xml', allDir) != None:  # search()会扫描整个string查找匹配,会扫描整个字符串并返回第一个成功的匹配
@@ -250,7 +249,7 @@ def main():
     # 默认当前目录从领域开始
     # rootdir / data / field / tps / encode
     for item_set in File_name.insert_cmd_response(root):
-        item_set
+        print(item_set)
     #print("rootdir:", rootdir)
 
     # info_list=[]
