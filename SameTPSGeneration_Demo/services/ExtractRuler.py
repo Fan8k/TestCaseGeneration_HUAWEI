@@ -4,7 +4,6 @@ import sys
 import difflib
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-#from daos.SelectObject import SelectObject
 from utils.MD5 import MD5
 from models.Rule import Rule
 from services.ContextSolver import ContextSolver
@@ -17,7 +16,6 @@ from preprocess.StrProcess import StrProcess
 
 class ExtractRuler:
 
-    #st = SelectObject()
     md5 = MD5()
     differ = difflib.Differ()
     cs = ContextSolver()
