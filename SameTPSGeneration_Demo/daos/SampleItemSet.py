@@ -51,7 +51,7 @@ class SampleItemSet:
 
                     for m in range(len(all_com_dir)):#一个com
                             try:
-                                item_list = parsexml.parse_xml2(all_com_dir[m], all_info_dir[m], tpslist[i])
+                                item_list = parsexml.parse_xml2(all_com_dir[m], all_info_dir[m], tpslist[i],1)
                                 all_item_list.append(item_list)
 
                             except FileNotFoundError as e:

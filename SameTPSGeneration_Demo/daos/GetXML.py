@@ -35,7 +35,7 @@ class GetXML:
                     item_list = []
                     if com_dir is not info_dir:
                         try:
-                            item_list=parsexml.parse_xml(com_dir,info_dir)
+                            item_list=parsexml.parse_xml(com_dir,info_dir,0)
 
                             yield item_list,com_list
                         except FileNotFoundError as e:
@@ -52,12 +52,38 @@ def main():
     path1 = os.path.abspath('..')
     rootdir = path1 + '/datas/data/tps1/1' + '/001_normalTest'
     get_xml = GetXML()
-
+    count = 0
     for items,comlist in get_xml.read_file(rootdir):#获取文件夹下所有com.xml文件内容
-          print(type(items))
-          print("comlist",comlist)
-          print(items[0].location_info)
 
+          print(items[4].responses)
+          tree = ET.parse(items[4].location_info)
+          root = tree.getroot()
+
+          num = 0
+          for item in root.findall('item'):
+              num += 1
+              if num == 5:
+                  '''
+                  item_info_list[file_count][1][0]为修改的item的index
+                  修改loop
+                  '''
+                  print(item)
+                  loop_text = item.find('loop')
+                  loop_text.text = '3'
+                  reponse_text = item.findall('response')
+                  templist = items[4].responses
+
+                  for i in range(len(reponse_text)):
+                      if templist[i] == 'None':
+                          reponse_text[i].text = ''
+                      else:
+                          s="me"+templist[i]
+                          reponse_text[i].text = s
+                          print(s)
+
+                  tree.write(os.path.join(rootdir,str(count+1)+"new.xml"))
+                  count+=1
+                  break
 
 
 
