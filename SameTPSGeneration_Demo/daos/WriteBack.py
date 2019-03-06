@@ -91,7 +91,7 @@ class WriteBack():
             else:
                 for i in range(len(score_list)):
                     score_list[i].text = str(item_info_list[file_count][1][1])
-                    print("有score",((first_item.findall('score'))[0]).text)
+                    print("有score", ((first_item.findall('score'))[0]).text)
 
             tree_info.write(os.path.join(path2,os.path.basename(infoname)))
 
@@ -121,7 +121,7 @@ class WriteBack():
                     tree.write(os.path.join(path2,os.path.basename(original_path)))
                     break
         for name in comlist:
-            if name is not original_path:
+            if name not in [original_path,infoname]:
                 tree_other=ET.parse(name)
                 for i in range(temp_count,self.filecount):
                     path3 = path1 + '/output/' + str(i + 1)
