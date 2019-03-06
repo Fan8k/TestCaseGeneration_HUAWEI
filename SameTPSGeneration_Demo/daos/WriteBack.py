@@ -33,7 +33,7 @@ class WriteBack():
         original_path = item_info_list[0][0][0].location_info
         pathnormal = path1 + '/output/001_normalTest'
         if self.xx :
-
+            print("创建")
             self.mkdir(pathnormal)
             for comname  in comlist:
 
@@ -78,7 +78,7 @@ class WriteBack():
 
 
             first_item = root_info.find('sceneinfo')
-            print(first_item)
+
             score_list = first_item.findall('score')
             if len(score_list) == 0:
 
@@ -87,8 +87,7 @@ class WriteBack():
                 score.tail = "\r\n"
 
                 first_item.append(score)
-                #root.append(first_item)
-                print("score_list=0", ((first_item.findall('score'))[0]).text)
+
             else:
                 for i in range(len(score_list)):
                     score_list[i].text = str(item_info_list[file_count][1][1])
